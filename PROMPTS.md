@@ -15,3 +15,9 @@ Logotipo, ícones e imagens: os 16 ícones do Bootstrap Icons com o nome de cada
 
 
 --------------------------------------------------------------------------------------------
+
+Prompt 2 - Gere a definição do site atualizada, já com o fluxo do QR, as telas do celular e a RN04
+
+--------------------------------------------------------------------------------------------
+
+Prompt 3 - Junte os wireframes que eu mandei, o guia de estilo e a definifição em um PDF 
