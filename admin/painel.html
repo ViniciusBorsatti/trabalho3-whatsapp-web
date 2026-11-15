@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do administrador – WhatsApp Web</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin-painel.css">
+  <script src="../js/tema.js"></script>
+  <script src="../js/admin-painel.js" defer></script>
+</head>
+<body>
+  <div class="admin">
+    <header class="admin-topo">
+      <button type="button" class="btn-icone btn-menu" id="btn-menu" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-lateral"><i class="bi bi-list"></i></button>
+      <h1>Painel do administrador</h1>
+    </header>
+
+    <nav class="admin-menu" id="menu-lateral" aria-label="Menu do administrador">
+      <ul>
+        <li><a href="#contatos" aria-current="page"><i class="bi bi-person-lines-fill"></i> Contatos</a></li>
+        <li><a href="#resumo"><i class="bi bi-chat-dots"></i> Mensagens</a></li>
+        <li><a href="../index.html"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+      </ul>
+    </nav>
+
+    <main class="admin-conteudo">
+      <section class="resumo" id="resumo" aria-label="Resumo">
+        <article class="cartao-resumo">
+          <i class="bi bi-people-fill"></i>
+          <div>
+            <p class="cartao-resumo-numero" id="total-contatos">0</p>
+            <p class="cartao-resumo-titulo">Total de contatos</p>
+          </div>
+        </article>
+        <article class="cartao-resumo">
+          <i class="bi bi-chat-dots-fill"></i>
+          <div>
+            <p class="cartao-resumo-numero" id="total-mensagens">0</p>
+            <p class="cartao-resumo-titulo">Total de mensagens</p>
+          </div>
+        </article>
+        <article class="cartao-resumo">
+          <i class="bi bi-slash-circle-fill"></i>
+          <div>
+            <p class="cartao-resumo-numero" id="total-bloqueados">0</p>
+            <p class="cartao-resumo-titulo">Contatos bloqueados</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="contatos" id="contatos" aria-labelledby="titulo-contatos">
+        <div class="contatos-topo">
+          <h2 id="titulo-contatos">Contatos</h2>
+          <label class="busca">
+            <i class="bi bi-search"></i>
+            <span class="visualmente-oculto">Pesquisar contatos</span>
+            <input type="search" id="busca-contatos" placeholder="Pesquisar por nome ou telefone">
+          </label>
+        </div>
+
+        <table class="tabela">
+          <caption>Contatos cadastrados</caption>
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Telefone</th>
+              <th scope="col">Mensagens</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-corpo"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="rodape-aviso">Clone do WhatsApp Web para fins educacionais, sem vínculo com o WhatsApp ou a Meta. Todos os dados são fictícios.</footer>
+  </div>
+
+  <div class="modal" id="modal-editar" role="dialog" aria-modal="true" aria-labelledby="titulo-editar" hidden>
+    <div class="modal-conteudo">
+      <h2 class="modal-titulo" id="titulo-editar">Editar contato</h2>
+      <form id="form-editar" novalidate>
+        <div class="grupo-campo">
+          <label for="editar-nome">Nome</label>
+          <input type="text" class="campo" id="editar-nome">
+          <p class="msg-erro" id="erro-nome"></p>
+        </div>
+        <div class="grupo-campo">
+          <label for="editar-telefone">Telefone</label>
+          <input type="tel" class="campo" id="editar-telefone" placeholder="(49) 99999-0001">
+          <p class="msg-erro" id="erro-telefone"></p>
+        </div>
+        <label class="grupo-check">
+          <input type="checkbox" id="editar-bloqueado">
+          Bloqueado
+        </label>
+        <div class="modal-acoes">
+          <button type="button" class="btn btn-secundario" id="editar-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-excluir" role="dialog" aria-modal="true" aria-labelledby="titulo-excluir" hidden>
+    <div class="modal-conteudo">
+      <h2 class="modal-titulo" id="titulo-excluir">Excluir contato?</h2>
+      <p class="modal-texto" id="texto-excluir"></p>
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-secundario" id="excluir-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-perigo" id="excluir-confirmar">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

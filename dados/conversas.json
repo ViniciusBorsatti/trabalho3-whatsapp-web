@@ -1,0 +1,175 @@
+[
+  {
+    "id": 1,
+    "nome": "Trabalho DWI – Grupo 4",
+    "grupo": true,
+    "telefone": "(49) 99999-0001",
+    "naoLidas": 3,
+    "favorita": true,
+    "fixada": true,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 101, "de": "contato", "texto": "Pessoal, quem vai fazer a tela de login?", "hora": "2026-11-14T19:10:00-03:00" },
+      { "id": 102, "de": "eu", "texto": "Eu faço o login e o cadastro", "hora": "2026-11-14T19:12:00-03:00" },
+      { "id": 103, "de": "contato", "texto": "Fechado! Eu fico com o painel admin", "hora": "2026-11-14T19:15:00-03:00" },
+      { "id": 104, "de": "contato", "texto": "Entrega é até sexta, não esqueçam", "hora": "2026-11-14T19:20:00-03:00" },
+      { "id": 105, "de": "eu", "texto": "Já subi a estrutura no repositório", "hora": "2026-11-15T10:00:00-03:00" }
+    ]
+  },
+  {
+    "id": 2,
+    "nome": "Mãe",
+    "grupo": false,
+    "telefone": "(49) 99999-0002",
+    "naoLidas": 0,
+    "favorita": true,
+    "fixada": true,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 201, "de": "contato", "texto": "Filho, vem almoçar no domingo?", "hora": "2026-11-14T11:02:00-03:00" },
+      { "id": 202, "de": "eu", "texto": "Vou sim, mãe!", "hora": "2026-11-14T11:30:00-03:00" },
+      { "id": 203, "de": "contato", "texto": "Vou fazer lasanha ❤️", "hora": "2026-11-14T11:31:00-03:00" }
+    ]
+  },
+  {
+    "id": 3,
+    "nome": "Lucas Ferreira",
+    "grupo": false,
+    "telefone": "(49) 99999-0003",
+    "naoLidas": 2,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 301, "de": "eu", "texto": "E aí, bora jogar hoje?", "hora": "2026-11-14T18:00:00-03:00" },
+      { "id": 302, "de": "contato", "texto": "Bora, depois das 21h", "hora": "2026-11-14T18:40:00-03:00" },
+      { "id": 303, "de": "contato", "texto": "Chama o Pedro também", "hora": "2026-11-14T18:41:00-03:00" }
+    ]
+  },
+  {
+    "id": 4,
+    "nome": "Ana Beatriz",
+    "grupo": false,
+    "telefone": "(49) 99999-0004",
+    "naoLidas": 0,
+    "favorita": true,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 401, "de": "contato", "texto": "Você tem o resumo de banco de dados?", "hora": "2026-11-14T20:15:00-03:00" },
+      { "id": 402, "de": "eu", "texto": "Tenho, te mando amanhã", "hora": "2026-11-14T20:30:00-03:00" }
+    ]
+  },
+  {
+    "id": 5,
+    "nome": "Família Silva",
+    "grupo": true,
+    "telefone": "(49) 99999-0005",
+    "naoLidas": 7,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 501, "de": "contato", "texto": "Bom dia, família!", "hora": "2026-11-15T07:00:00-03:00" },
+      { "id": 502, "de": "contato", "texto": "Alguém sabe se vai chover amanhã?", "hora": "2026-11-15T09:45:00-03:00" }
+    ]
+  },
+  {
+    "id": 6,
+    "nome": "Carlos Mendes",
+    "grupo": false,
+    "telefone": "(49) 99999-0006",
+    "naoLidas": 0,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": true,
+    "mensagens": [
+      { "id": 601, "de": "contato", "texto": "Promoção imperdível, clique no link!", "hora": "2026-11-10T09:00:00-03:00" },
+      { "id": 602, "de": "contato", "texto": "Última chance!!!", "hora": "2026-11-10T09:05:00-03:00" }
+    ]
+  },
+  {
+    "id": 7,
+    "nome": "Juliana Costa",
+    "grupo": false,
+    "telefone": "(49) 99999-0007",
+    "naoLidas": 1,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 701, "de": "eu", "texto": "Obrigado pela ajuda ontem!", "hora": "2026-11-14T14:00:00-03:00" },
+      { "id": 702, "de": "contato", "texto": "Imagina, precisando é só chamar", "hora": "2026-11-14T14:20:00-03:00" }
+    ]
+  },
+  {
+    "id": 8,
+    "nome": "Futebol de Quinta",
+    "grupo": true,
+    "telefone": "(49) 99999-0008",
+    "naoLidas": 0,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 801, "de": "contato", "texto": "Quinta tem jogo às 20h", "hora": "2026-11-13T12:00:00-03:00" },
+      { "id": 802, "de": "eu", "texto": "Tô dentro", "hora": "2026-11-13T12:10:00-03:00" }
+    ]
+  },
+  {
+    "id": 9,
+    "nome": "Prof. Ricardo",
+    "grupo": false,
+    "telefone": "(49) 99999-0009",
+    "naoLidas": 0,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 901, "de": "eu", "texto": "Professor, posso entregar o trabalho na segunda?", "hora": "2026-11-12T10:00:00-03:00" },
+      { "id": 902, "de": "contato", "texto": "Pode sim, sem problemas.", "hora": "2026-11-12T13:30:00-03:00" }
+    ]
+  },
+  {
+    "id": 10,
+    "nome": "Mariana Rocha",
+    "grupo": false,
+    "telefone": "(49) 99999-0010",
+    "naoLidas": 0,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 1001, "de": "contato", "texto": "Viu o filme que te indiquei?", "hora": "2026-11-11T21:00:00-03:00" },
+      { "id": 1002, "de": "eu", "texto": "Vi! Muito bom", "hora": "2026-11-11T22:15:00-03:00" }
+    ]
+  },
+  {
+    "id": 11,
+    "nome": "Turma ADS 2026",
+    "grupo": true,
+    "telefone": "(49) 99999-0011",
+    "naoLidas": 12,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 1101, "de": "contato", "texto": "Amanhã não vai ter aula", "hora": "2026-11-14T17:30:00-03:00" },
+      { "id": 1102, "de": "contato", "texto": "Confirmado pela coordenação", "hora": "2026-11-14T17:32:00-03:00" }
+    ]
+  },
+  {
+    "id": 12,
+    "nome": "Pedro Almeida",
+    "grupo": false,
+    "telefone": "(49) 99999-0012",
+    "naoLidas": 0,
+    "favorita": false,
+    "fixada": false,
+    "bloqueado": false,
+    "mensagens": [
+      { "id": 1201, "de": "contato", "texto": "Me devolve o carregador kkk", "hora": "2026-11-09T15:00:00-03:00" },
+      { "id": 1202, "de": "eu", "texto": "Amanhã eu levo", "hora": "2026-11-09T15:10:00-03:00" }
+    ]
+  }
+]

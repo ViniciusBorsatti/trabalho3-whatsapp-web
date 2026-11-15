@@ -21,3 +21,13 @@ Prompt 2 - Gere a definição do site atualizada, já com o fluxo do QR, as tela
 --------------------------------------------------------------------------------------------
 
 Prompt 3 - Junte os wireframes que eu mandei, o guia de estilo e a definifição em um PDF 
+
+
+--------------------------------------------------------------------------------------------
+
+Prompt 4 - Gere uma estrutura de arquivos, sem nenhum codigo dentro, ideal para essas telas
+
+
+--------------------------------------------------------------------------------------------
+
+Prompt 5 - Gere um HTML base para essas telas, e um css base tambem 
