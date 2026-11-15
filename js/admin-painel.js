@@ -61,19 +61,26 @@ function botao(texto, classe, acao, id) {
   return b;
 }
 
+function contatos() {
+  return conversas.filter(function (c) {
+    return !c.grupo;
+  });
+}
+
 function renderizarResumo() {
-  totalContatos.textContent = conversas.length;
-  totalMensagens.textContent = conversas.reduce(function (soma, c) {
+  const lista = contatos();
+  totalContatos.textContent = lista.length;
+  totalMensagens.textContent = lista.reduce(function (soma, c) {
     return soma + c.mensagens.length;
   }, 0);
-  totalBloqueados.textContent = conversas.filter(function (c) {
+  totalBloqueados.textContent = lista.filter(function (c) {
     return c.bloqueado;
   }).length;
 }
 
 function renderizarTabela() {
   const termo = busca.value.trim().toLowerCase();
-  const filtrados = conversas.filter(function (c) {
+  const filtrados = contatos().filter(function (c) {
     return c.nome.toLowerCase().includes(termo) || c.telefone.includes(termo);
   });
 
