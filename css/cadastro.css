@@ -1,0 +1,154 @@
+.cadastro-pagina {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  background-color: var(--fundo);
+  color: var(--texto);
+}
+
+.cadastro-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: var(--verde);
+}
+
+.cadastro-cabecalho img {
+  width: 48px;
+  height: 48px;
+}
+
+.cadastro-cabecalho nav a {
+  color: var(--branco);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.cadastro-cabecalho nav a:hover {
+  opacity: 0.8;
+}
+
+.cadastro-cabecalho nav a:focus-visible {
+  outline: 3px solid var(--branco);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cadastro-conteudo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px;
+}
+
+.cartao-cadastro {
+  width: 100%;
+  padding: 24px;
+  background-color: var(--cartao);
+  border-radius: 8px;
+}
+
+.cartao-cadastro h1 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: var(--verde);
+}
+
+.grupo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.grupo-campo .campo {
+  transition: border-color 0.2s ease;
+}
+
+.grupo-campo .campo.campo-invalido {
+  border-color: var(--erro);
+}
+
+.grupo-campo .msg-erro {
+  min-height: 1.1em;
+  font-size: 0.875rem;
+  color: var(--erro);
+}
+
+.cadastro-pagina .btn-primario {
+  width: 100%;
+  padding: 12px;
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.cadastro-pagina .btn-primario:hover {
+  filter: brightness(0.9);
+}
+
+.cadastro-pagina .btn-primario:active {
+  transform: scale(0.98);
+}
+
+.cadastro-pagina .btn-primario:focus-visible {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+.cadastro-rodape-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.cadastro-rodape-link a {
+  color: var(--verde);
+  font-weight: 600;
+}
+
+.cadastro-rodape-link a:hover {
+  text-decoration: underline;
+}
+
+.cadastro-rodape-link a:focus-visible {
+  outline: 2px solid var(--verde);
+  outline-offset: 2px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  padding: 12px 20px;
+  color: var(--branco);
+  background-color: var(--verde);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translate(-50%, 20px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.visivel {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 768px) {
+  .cadastro-conteudo {
+    align-items: center;
+    padding: 48px 16px;
+  }
+
+  .cartao-cadastro {
+    max-width: 420px;
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cartao-cadastro {
+    max-width: 460px;
+  }
+}
