@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar como administrador – WhatsApp Web</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin-login.css">
+  <script src="../js/tema.js"></script>
+  <script src="../js/admin-login.js" defer></script>
+</head>
+<body>
+  <div class="login-pagina">
+    <header class="login-cabecalho">
+      <img src="../img/logo.png" alt="Logo do clone do WhatsApp Web" width="48" height="48">
+      <nav aria-label="Navegação de acesso">
+        <a href="../index.html">Voltar ao site</a>
+      </nav>
+    </header>
+
+    <main class="login-conteudo">
+      <section class="cartao-login" aria-labelledby="titulo-admin-login">
+        <h1 id="titulo-admin-login">Entrar como administrador</h1>
+
+        <p class="msg-erro-geral" id="erro-geral" role="alert"></p>
+
+        <form id="form-admin-login" novalidate>
+          <div class="grupo-campo">
+            <label for="email">E-mail</label>
+            <input type="email" class="campo" id="email" autocomplete="email" required aria-describedby="erro-email">
+            <p class="msg-erro" id="erro-email"></p>
+          </div>
+
+          <div class="grupo-campo">
+            <label for="senha">Senha</label>
+            <div class="senha-campo">
+              <input type="password" class="campo" id="senha" autocomplete="current-password" minlength="8" required aria-describedby="erro-senha">
+              <button type="button" class="btn-mostrar-senha" id="btn-mostrar-senha" aria-label="Mostrar senha" aria-pressed="false" aria-controls="senha">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <p class="msg-erro" id="erro-senha"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primario">Entrar</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="rodape-aviso">Clone do WhatsApp Web para fins educacionais, sem vínculo com o WhatsApp ou a Meta. Todos os dados são fictícios.</footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
