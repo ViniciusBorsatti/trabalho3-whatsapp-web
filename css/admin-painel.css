@@ -1,0 +1,284 @@
+body {
+  background: var(--painel);
+}
+
+.admin {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 64px 1fr auto;
+  min-height: 100vh;
+}
+
+.admin-topo {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  background: var(--verde-escuro);
+  color: #FFFFFF;
+}
+
+.admin-topo h1 {
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.admin-topo .btn-icone {
+  color: #FFFFFF;
+}
+
+.admin-topo .btn-icone:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-menu {
+  display: none;
+}
+
+.admin-menu {
+  grid-column: 1;
+  grid-row: 2;
+  padding: 12px 0;
+  background: var(--fundo);
+  border-right: 1px solid var(--divisoria);
+}
+
+.admin-menu a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  color: var(--texto);
+  font-size: 15px;
+}
+
+.admin-menu a i {
+  font-size: 18px;
+  color: var(--texto-2);
+}
+
+.admin-menu a:hover {
+  background: var(--painel);
+}
+
+.admin-menu a[aria-current="page"] {
+  background: var(--divisoria);
+}
+
+.admin-menu a[aria-current="page"] i {
+  color: var(--verde);
+}
+
+.admin-conteudo {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  min-width: 0;
+}
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cartao-resumo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--fundo);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(11, 20, 26, 0.1);
+}
+
+.cartao-resumo > i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--painel);
+  color: var(--verde);
+  font-size: 22px;
+}
+
+.cartao-resumo-numero {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.cartao-resumo-titulo {
+  color: var(--texto-2);
+}
+
+.contatos {
+  padding: 20px;
+  background: var(--fundo);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(11, 20, 26, 0.1);
+}
+
+.contatos-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.contatos-topo h2 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.contatos-topo .busca {
+  flex: 0 1 320px;
+}
+
+.tabela caption {
+  padding-bottom: 8px;
+  text-align: left;
+  color: var(--texto-2);
+}
+
+.tabela .btn {
+  width: auto;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.situacao {
+  font-weight: 500;
+  color: var(--verde);
+}
+
+.situacao.bloqueado {
+  color: var(--erro);
+}
+
+.modal-titulo {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--texto);
+}
+
+.modal-texto {
+  margin-bottom: 24px;
+  color: var(--texto-2);
+}
+
+.grupo-campo {
+  margin-bottom: 16px;
+}
+
+.grupo-campo label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--texto-2);
+}
+
+.grupo-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.grupo-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--verde);
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.admin > .rodape-aviso {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+
+@media (max-width: 1024px) {
+  .admin {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .resumo {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .admin {
+    grid-template-columns: 1fr;
+    grid-template-rows: 56px auto 1fr auto;
+  }
+
+  .admin-topo {
+    padding: 0 8px;
+  }
+
+  .btn-menu {
+    display: inline-flex;
+  }
+
+  .admin-menu {
+    display: none;
+    grid-row: 2;
+    border-right: none;
+    border-bottom: 1px solid var(--divisoria);
+  }
+
+  .admin-menu.aberto {
+    display: block;
+  }
+
+  .admin-conteudo {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 16px;
+  }
+
+  .admin > .rodape-aviso {
+    grid-row: 4;
+  }
+
+  .resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .contatos {
+    padding: 16px;
+  }
+
+  .contatos-topo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contatos-topo .busca {
+    flex: none;
+  }
+
+  .modal-acoes .btn {
+    width: auto;
+  }
+}
