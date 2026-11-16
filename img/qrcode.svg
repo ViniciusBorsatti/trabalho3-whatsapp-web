@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Código QR simulado">
+  <rect width="220" height="220" fill="#FFFFFF"/>
+  <g fill="#111B21">
+    <!-- Canto superior esquerdo -->
+    <rect x="16" y="16" width="56" height="56" rx="4"/>
+    <rect x="24" y="24" width="40" height="40" fill="#FFFFFF"/>
+    <rect x="32" y="32" width="24" height="24"/>
+    <!-- Canto superior direito -->
+    <rect x="148" y="16" width="56" height="56" rx="4"/>
+    <rect x="156" y="24" width="40" height="40" fill="#FFFFFF"/>
+    <rect x="164" y="32" width="24" height="24"/>
+    <!-- Canto inferior esquerdo -->
+    <rect x="16" y="148" width="56" height="56" rx="4"/>
+    <rect x="24" y="156" width="40" height="40" fill="#FFFFFF"/>
+    <rect x="32" y="164" width="24" height="24"/>
+    <!-- Módulos internos simulados -->
+    <rect x="84" y="20" width="8" height="8"/><rect x="100" y="20" width="16" height="8"/><rect x="124" y="20" width="12" height="8"/>
+    <rect x="84" y="36" width="16" height="8"/><rect x="112" y="36" width="8" height="8"/><rect x="128" y="36" width="8" height="8"/>
+    <rect x="84" y="52" width="8" height="8"/><rect x="100" y="52" width="12" height="8"/><rect x="124" y="52" width="12" height="8"/>
+    <rect x="20" y="84" width="16" height="8"/><rect x="44" y="84" width="16" height="8"/><rect x="68" y="84" width="12" height="8"/>
+    <rect x="140" y="84" width="16" height="8"/><rect x="168" y="84" width="12" height="8"/><rect x="188" y="84" width="12" height="8"/>
+    <rect x="20" y="100" width="8" height="12"/><rect x="36" y="100" width="16" height="8"/><rect x="60" y="100" width="12" height="12"/>
+    <rect x="148" y="100" width="8" height="16"/><rect x="164" y="100" width="16" height="8"/><rect x="192" y="100" width="8" height="12"/>
+    <rect x="20" y="124" width="12" height="8"/><rect x="44" y="120" width="12" height="12"/><rect x="64" y="124" width="16" height="8"/>
+    <rect x="144" y="124" width="12" height="8"/><rect x="168" y="120" width="16" height="12"/><rect x="192" y="124" width="8" height="8"/>
+    <rect x="84" y="148" width="12" height="8"/><rect x="108" y="148" width="16" height="8"/><rect x="136" y="148" width="12" height="8"/>
+    <rect x="160" y="148" width="16" height="16"/><rect x="184" y="148" width="16" height="8"/>
+    <rect x="84" y="164" width="8" height="16"/><rect x="100" y="164" width="12" height="8"/><rect x="120" y="164" width="16" height="16"/>
+    <rect x="148" y="172" width="12" height="8"/><rect x="176" y="168" width="12" height="16"/><rect x="196" y="164" width="8" height="16"/>
+    <rect x="84" y="188" width="16" height="12"/><rect x="108" y="188" width="12" height="12"/><rect x="132" y="188" width="16" height="12"/>
+    <rect x="160" y="188" width="12" height="12"/><rect x="184" y="188" width="16" height="12"/>
+  </g>
+  <!-- Ícone central discreto -->
+  <circle cx="110" cy="110" r="18" fill="#FFFFFF"/>
+  <circle cx="110" cy="110" r="14" fill="#00A884"/>
+  <path d="M104 110l4 4 8-8" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
