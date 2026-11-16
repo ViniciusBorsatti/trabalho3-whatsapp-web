@@ -1,0 +1,460 @@
+/* ==========================================================================
+   perfil.css — Estilos da página Perfil do contato (perfil.html)
+   Usa exclusivamente variáveis CSS definidas em css/style.css
+   ========================================================================== */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra-superior {
+  background-color: var(--painel);
+  border-bottom: 1px solid var(--borda);
+  padding: 14px 24px;
+}
+
+.barra-superior-conteudo {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.titulo-com-voltar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titulo-com-voltar h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.btn-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--texto);
+  font-size: 20px;
+  transition: background-color var(--transicao);
+}
+
+.btn-icone:hover {
+  background-color: var(--hover-item);
+  text-decoration: none;
+}
+
+.nav-atalhos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.perfil-container {
+  flex: 1;
+  padding: 24px 16px 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.perfil-painel {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-cabecalho,
+.perfil-bloco {
+  background-color: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 22px 24px;
+}
+
+.perfil-cabecalho {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.perfil-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+
+.perfil-cabecalho h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.perfil-telefone {
+  font-size: 15px;
+  color: var(--texto-sec);
+}
+
+.perfil-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--raio-pilula);
+}
+
+.badge-status[hidden] {
+  display: none;
+}
+
+.badge-status.favorito {
+  background-color: var(--verde-claro);
+  color: var(--verde-escuro);
+}
+
+.badge-status.bloqueado {
+  background-color: rgba(234, 0, 56, 0.12);
+  color: var(--perigo);
+}
+
+.perfil-atalhos-rapidos {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.atalho-visual {
+  flex: 1;
+  max-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 8px;
+  background-color: var(--painel);
+  color: var(--verde-escuro);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-padrao);
+  font-family: var(--fonte);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transicao);
+}
+
+[data-tema="escuro"] .atalho-visual {
+  color: var(--verde);
+}
+
+.atalho-visual:hover {
+  background-color: var(--hover-item);
+}
+
+.atalho-visual i {
+  font-size: 18px;
+}
+
+.bloco-rotulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-sec);
+  margin-bottom: 6px;
+}
+
+.bloco-valor {
+  font-size: 15px;
+  color: var(--texto);
+}
+
+.bloco-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.midia-contador {
+  font-size: 13px;
+  color: var(--texto-sec);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.midia-grade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.midia-item {
+  height: 76px;
+  background-color: var(--painel);
+  border-radius: var(--raio-padrao);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto-sec);
+  font-size: 24px;
+}
+
+/* Lista de ações do contato */
+.perfil-acoes {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.acao-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  background: transparent;
+  border: none;
+  font-family: var(--fonte);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--texto);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transicao);
+}
+
+.acao-item:hover {
+  background-color: var(--hover-item);
+}
+
+.acao-item i {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+}
+
+.acao-item.acao-perigo {
+  color: var(--perigo);
+}
+
+/* Ajustes do modal de denúncia */
+.modal-subtitulo {
+  font-size: 13px;
+  color: var(--texto-sec);
+  margin-bottom: 16px;
+}
+
+.contador-linha {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+  color: var(--texto-sec);
+}
+
+.checkbox-bloquear {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.checkbox-bloquear input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--verde-escuro);
+}
+
+/* ==========================================================================
+   Breakpoints responsivos (<= 1024px e <= 768px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .barra-superior {
+    padding: 14px 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-atalhos {
+    display: none;
+  }
+
+  .perfil-container {
+    padding: 0 0 24px;
+  }
+
+  .perfil-cabecalho,
+  .perfil-bloco {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* ==========================================================================
+   Estilos autocontidos de Modal, Formulário, Botão Perigo e Toast
+   (garante funcionamento independente das classes de css/style.css)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(11, 20, 26, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal-overlay.aberto {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-caixa {
+  background-color: var(--fundo-card, var(--balao-recebido, var(--painel)));
+  color: var(--texto);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--borda, var(--painel));
+}
+
+.modal-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-cabecalho h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.btn-fechar-modal {
+  background: transparent;
+  border: none;
+  color: var(--texto-sec);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-fechar-modal:hover {
+  background-color: var(--painel);
+  color: var(--texto);
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.campo-grupo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-sec);
+}
+
+.campo-controle {
+  width: 100%;
+  font-family: var(--fonte);
+  font-size: 15px;
+  color: var(--texto);
+  background-color: var(--fundo-card, var(--balao-recebido, var(--painel)));
+  border: 1px solid var(--borda, var(--texto-sec));
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.campo-controle:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.campo-controle.campo-invalido {
+  border-color: var(--perigo);
+}
+
+.erro-campo {
+  font-size: 12px;
+  color: var(--perigo);
+  min-height: 16px;
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-perigo-solido {
+  background-color: var(--perigo);
+  color: #FFFFFF;
+}
+
+.btn-perigo-solido:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.toast-aviso {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background-color: var(--texto);
+  color: var(--painel);
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  z-index: 1100;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast-aviso.visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
