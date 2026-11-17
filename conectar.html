@@ -12,48 +12,40 @@
 </head>
 <body>
   <div class="conectar-pagina">
-    <header class="conectar-cabecalho">
-      <img src="img/logo.png" alt="Logo do clone do WhatsApp Web" width="48" height="48">
-      <nav aria-label="Navegação de acesso">
-        <a href="index.html">Voltar ao início</a>
-      </nav>
-    </header>
+    <div class="conectar-celular">
+      <header class="conectar-cabecalho">
+        <i class="bi bi-whatsapp logo-icone" aria-hidden="true"></i>
+        <nav aria-label="Navegação de acesso">
+          <a href="index.html">Voltar ao início</a>
+        </nav>
+      </header>
 
-    <main class="conectar-conteudo">
-      <section class="cartao-conectar" aria-labelledby="titulo-conectar">
-        <div class="conectar-texto">
-          <h1 id="titulo-conectar">Escaneie para entrar</h1>
+      <main class="conectar-conteudo">
+        <section class="cartao-conectar" aria-labelledby="titulo-conectar">
+          <h1 id="titulo-conectar">Conectar a um computador?</h1>
 
-          <ol class="passos">
-            <li>Escaneie o QR code com a câmera do seu celular</li>
-            <li>Toque no link para abrir o WhatsApp</li>
-            <li>Escaneie o QR code novamente para vincular à sua conta</li>
-          </ol>
-
-          <div class="linha-opcoes">
-            <div class="manter-conectado">
-              <input type="checkbox" id="manter-conectado" checked>
-              <label for="manter-conectado">Manter conectado neste navegador</label>
+          <article class="aparelho" aria-label="Aparelho que será conectado">
+            <i class="bi bi-laptop aparelho-icone" aria-hidden="true"></i>
+            <div class="aparelho-info">
+              <p class="aparelho-nome">Google Chrome no Windows</p>
+              <p class="aparelho-detalhe">Concórdia, SC</p>
+              <p class="aparelho-detalhe" id="aparelho-hora"></p>
             </div>
-            <a href="login.html">Entrar com número de telefone</a>
-          </div>
-        </div>
+          </article>
 
-        <div class="conectar-qr">
-          <img src="img/qr-code.png" alt="QR code para conectar o computador ao WhatsApp Web" width="240" height="240">
-          <p class="contagem" id="contagem">Expira em 60 s</p>
+          <p class="contagem" id="contagem">O QR code expira em 60 s</p>
           <p class="msg-erro-geral" id="erro-conexao" role="alert"></p>
           <button type="button" class="btn btn-secundario btn-novo-qr" id="btn-novo-qr" hidden>Gerar novo QR code</button>
-        </div>
 
-        <div class="acoes-conectar">
-          <button type="button" class="btn btn-secundario" id="btn-cancelar">Cancelar</button>
-          <button type="button" class="btn btn-primario" id="btn-conectar">Conectar</button>
-        </div>
-      </section>
-    </main>
+          <div class="acoes-conectar">
+            <button type="button" class="btn btn-secundario" id="btn-cancelar">Cancelar</button>
+            <button type="button" class="btn btn-primario" id="btn-conectar">Conectar</button>
+          </div>
+        </section>
+      </main>
 
-    <footer class="rodape-aviso">Clone do WhatsApp Web para fins educacionais, sem vínculo com o WhatsApp ou a Meta. Todos os dados são fictícios.</footer>
+      <footer class="rodape-aviso">Clone do WhatsApp Web para fins educacionais, sem vínculo com o WhatsApp ou a Meta. Todos os dados são fictícios.</footer>
+    </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

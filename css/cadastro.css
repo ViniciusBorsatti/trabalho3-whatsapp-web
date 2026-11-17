@@ -14,9 +14,16 @@
   background-color: var(--verde);
 }
 
-.cadastro-cabecalho img {
+.cadastro-cabecalho .logo-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 48px;
   height: 48px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  color: var(--verde);
+  font-size: 30px;
 }
 
 .cadastro-cabecalho nav a {

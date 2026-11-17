@@ -37,22 +37,19 @@
     }, 3500);
   }
 
-  /**
-   * Sincroniza o interruptor com o tema salvo em js/tema.js.
-   */
   function sincronizarTema() {
-    const temaAtual = window.TemaApp ? window.TemaApp.obter() : (localStorage.getItem('whatsapp_clone_tema') || 'claro');
+    const temaAtual = localStorage.getItem('tema') === 'escuro' ? 'escuro' : 'claro';
     toggleTema.checked = temaAtual === 'escuro';
     statusTema.textContent = temaAtual === 'escuro' ? 'Escuro ativado' : 'Claro ativado';
   }
 
   toggleTema.addEventListener('change', function () {
     const novoTema = toggleTema.checked ? 'escuro' : 'claro';
-    if (window.TemaApp) {
-      window.TemaApp.aplicar(novoTema);
+    localStorage.setItem('tema', novoTema);
+    if (novoTema === 'escuro') {
+      document.documentElement.setAttribute('data-tema', 'escuro');
     } else {
-      document.documentElement.setAttribute('data-tema', novoTema);
-      localStorage.setItem('whatsapp_clone_tema', novoTema);
+      document.documentElement.removeAttribute('data-tema');
     }
     sincronizarTema();
     mostrarToast(`Tema ${novoTema} aplicado.`);

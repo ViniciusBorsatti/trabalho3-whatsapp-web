@@ -6,13 +6,19 @@ const btnNovoQr = document.getElementById('btn-novo-qr');
 const btnConectar = document.getElementById('btn-conectar');
 const btnCancelar = document.getElementById('btn-cancelar');
 const toast = document.getElementById('toast');
+const aparelhoHora = document.getElementById('aparelho-hora');
 
 let restante = TEMPO_TOTAL;
 let intervalo = null;
 let temporizadorToast = null;
 
+function preencherHorario() {
+  const agora = new Date();
+  aparelhoHora.textContent = 'Hoje às ' + String(agora.getHours()).padStart(2, '0') + ':' + String(agora.getMinutes()).padStart(2, '0');
+}
+
 function atualizarContagem() {
-  contagem.textContent = 'Expira em ' + restante + ' s';
+  contagem.textContent = 'O QR code expira em ' + restante + ' s';
 }
 
 function expirarQr() {
@@ -74,5 +80,7 @@ btnCancelar.addEventListener('click', () => {
   clearInterval(intervalo);
   window.location.href = 'index.html';
 });
+
+preencherHorario();
 
 iniciarContagem();
