@@ -1,0 +1,521 @@
+/* ==========================================================================
+   configuracoes.css — Estilos da página Configurações (configuracoes.html)
+   Usa exclusivamente variáveis CSS definidas em css/style.css
+   ========================================================================== */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra-superior {
+  background-color: var(--painel);
+  border-bottom: 1px solid var(--borda);
+  padding: 12px 24px;
+}
+
+.barra-superior-conteudo {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.titulo-com-voltar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titulo-com-voltar h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.btn-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--texto);
+  font-size: 20px;
+  transition: background-color var(--transicao);
+}
+
+.btn-icone:hover {
+  background-color: var(--hover-item);
+  text-decoration: none;
+}
+
+.nav-atalhos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+}
+
+/* Layout em Grid: coluna de opções + coluna da tabela de atalhos */
+.config-layout {
+  flex: 1;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  background-color: var(--fundo-card);
+  border-left: 1px solid var(--borda);
+  border-right: 1px solid var(--borda);
+}
+
+.config-painel {
+  border-right: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+}
+
+.config-busca-area {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--borda);
+}
+
+/* Cartão do perfil do usuário */
+.perfil-usuario-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--borda);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--fonte);
+  transition: background-color var(--transicao);
+}
+
+.perfil-usuario-card:hover {
+  background-color: var(--hover-item);
+}
+
+.perfil-usuario-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.perfil-usuario-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.perfil-usuario-texto strong {
+  font-size: 17px;
+  color: var(--texto);
+}
+
+.perfil-usuario-texto span {
+  font-size: 14px;
+  color: var(--texto-sec);
+}
+
+.icone-editar {
+  color: var(--texto-sec);
+  font-size: 18px;
+}
+
+/* Lista de opções */
+.config-lista {
+  list-style: none;
+}
+
+.config-item-wrapper[hidden] {
+  display: none;
+}
+
+.config-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--borda);
+  font-family: var(--fonte);
+  text-align: left;
+  cursor: pointer;
+  color: var(--texto);
+  transition: background-color var(--transicao);
+}
+
+.config-item:hover {
+  background-color: var(--hover-item);
+  text-decoration: none;
+}
+
+.config-item i {
+  font-size: 19px;
+  color: var(--texto-sec);
+  width: 24px;
+  text-align: center;
+}
+
+.config-item strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--texto);
+}
+
+.config-item span {
+  display: block;
+  font-size: 13px;
+  color: var(--texto-sec);
+}
+
+.config-item-tema {
+  justify-content: space-between;
+  cursor: default;
+}
+
+.config-tema-rotulo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Interruptor (switch) de tema claro/escuro */
+.switch-tema {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.switch-tema input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-trilho {
+  position: absolute;
+  inset: 0;
+  background-color: var(--texto-sec);
+  border-radius: var(--raio-pilula);
+  transition: background-color var(--transicao);
+}
+
+.switch-trilho::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  transition: transform var(--transicao);
+}
+
+.switch-tema input:checked + .switch-trilho {
+  background-color: var(--verde);
+}
+
+.switch-tema input:checked + .switch-trilho::before {
+  transform: translateX(22px);
+}
+
+.switch-tema input:focus-visible + .switch-trilho {
+  outline: 3px solid var(--verde);
+  outline-offset: 2px;
+}
+
+.config-desconectar i,
+.config-desconectar strong {
+  color: var(--perigo);
+}
+
+/* Painel direito: Tabela de atalhos do teclado */
+.atalhos-painel {
+  background-color: var(--painel);
+  padding: 28px 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.atalhos-cartao {
+  background-color: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 680px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.atalhos-cabecalho {
+  margin-bottom: 16px;
+}
+
+.atalhos-cabecalho h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.atalhos-subtitulo {
+  font-size: 13px;
+  color: var(--texto-sec);
+}
+
+.tabela-responsiva {
+  overflow-x: auto;
+}
+
+.tabela-atalhos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela-atalhos thead th {
+  text-align: left;
+  padding: 12px 14px;
+  background-color: var(--painel);
+  color: var(--texto);
+  font-weight: 700;
+  border-bottom: 2px solid var(--borda);
+}
+
+.tabela-atalhos tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--borda);
+  color: var(--texto);
+}
+
+/* Linhas zebradas obrigatórias usando :nth-child */
+.tabela-atalhos tbody tr:nth-child(even) {
+  background-color: var(--painel);
+}
+
+.tabela-atalhos tbody tr:hover {
+  background-color: var(--hover-item);
+}
+
+kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  font-family: var(--fonte);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto);
+  background-color: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--borda);
+}
+
+/* ==========================================================================
+   Breakpoints responsivos (<= 1024px e <= 768px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .config-layout {
+    grid-template-columns: 360px 1fr;
+  }
+
+  .atalhos-painel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-atalhos {
+    display: none;
+  }
+
+  .config-layout {
+    grid-template-columns: 1fr;
+    border: none;
+  }
+
+  .config-painel {
+    border-right: none;
+  }
+
+  .atalhos-painel {
+    padding: 16px;
+  }
+}
+
+/* ==========================================================================
+   Estilos autocontidos de Busca, Modal, Formulário e Toast
+   (garante funcionamento independente das classes de css/style.css)
+   ========================================================================== */
+.busca-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--painel);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+.busca-box i {
+  color: var(--texto-sec);
+  font-size: 15px;
+}
+
+.busca-box input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--texto);
+  font-family: var(--fonte);
+  font-size: 14px;
+}
+
+.busca-box input:focus {
+  outline: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(11, 20, 26, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal-overlay.aberto {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-caixa {
+  background-color: var(--fundo-card, var(--balao-recebido, var(--painel)));
+  color: var(--texto);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--borda, var(--painel));
+}
+
+.modal-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-cabecalho h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.btn-fechar-modal {
+  background: transparent;
+  border: none;
+  color: var(--texto-sec);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-fechar-modal:hover {
+  background-color: var(--painel);
+  color: var(--texto);
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.campo-grupo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-sec);
+}
+
+.campo-controle {
+  width: 100%;
+  padding: 10px 4px;
+  font-family: var(--fonte);
+  font-size: 15px;
+  color: var(--texto);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--borda, var(--texto-sec));
+}
+
+.campo-controle:focus {
+  outline: none;
+  border-bottom-color: var(--verde);
+}
+
+.campo-controle.campo-invalido {
+  border-bottom-color: var(--perigo);
+}
+
+.erro-campo {
+  font-size: 12px;
+  color: var(--perigo);
+  min-height: 16px;
+}
+
+.modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.toast-aviso {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background-color: var(--texto);
+  color: var(--painel);
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  z-index: 1100;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast-aviso.visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
