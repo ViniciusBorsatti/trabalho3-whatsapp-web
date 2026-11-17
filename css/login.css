@@ -27,7 +27,7 @@
 }
 
 .login-cabecalho nav a {
-  color: var(--branco);
+  color: #FFFFFF;
   font-weight: 600;
   text-decoration: none;
   transition: opacity 0.2s ease;
@@ -38,7 +38,7 @@
 }
 
 .login-cabecalho nav a:focus-visible {
-  outline: 3px solid var(--branco);
+  outline: 3px solid #FFFFFF;
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -169,7 +169,7 @@
   bottom: 24px;
   left: 50%;
   padding: 12px 20px;
-  color: var(--branco);
+  color: #FFFFFF;
   background-color: var(--verde);
   border-radius: 8px;
   opacity: 0;
