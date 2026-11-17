@@ -31,3 +31,12 @@ Prompt 4 - Gere uma estrutura de arquivos, sem nenhum codigo dentro, ideal para 
 --------------------------------------------------------------------------------------------
 
 Prompt 5 - Gere um HTML base para essas telas, e um css base tambem 
+
+--------------------------------------------------------------------------------------------
+
+Prompt 6 - Converta a questão dos números para serem preenchidos automáticos na formatação com parenteses
+
+ --------------------------------------------------------------------------------------------
+
+ Prompt 7 - Melhore a página de login, para ficar no modelo da versão que já existe, igual tá feito aí na foto
+ 
