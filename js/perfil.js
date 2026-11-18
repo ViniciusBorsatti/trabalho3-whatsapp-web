@@ -35,12 +35,13 @@
   const checkboxBloquearTambem = document.getElementById('bloquear-tambem');
   const toastEl = document.getElementById('toast-perfil');
 
+   // Contato vazio até o real ser carregado, para nunca mostrar uma pessoa fixa
   let contatoAtual = {
-    id: 1,
-    nome: 'Ana Souza',
-    telefone: '(49) 99999-0001',
-    recado: 'Disponível',
-    favorito: true,
+    id: null,
+    nome: '',
+    telefone: '',
+    recado: '',
+    favorito: false,
     bloqueado: false
   };
 
@@ -81,7 +82,12 @@
     const estaBloqueado = bloqueados.includes(contatoAtual.id);
 
     nomeEl.textContent = contatoAtual.nome;
-    telefoneEl.textContent = `+55 ${contatoAtual.telefone.replace(/[()]/g, '')}`;
+    // Grupos não têm telefone, então mostram só o rótulo "Grupo"
+    if (contatoAtual.grupo) {
+      telefoneEl.textContent = 'Grupo';
+    } else {
+      telefoneEl.textContent = `+55 ${contatoAtual.telefone.replace(/[()]/g, '')}`;
+    }
     recadoEl.textContent = contatoAtual.recado || 'Disponível';
     avatarEl.alt = `Avatar padrão de ${contatoAtual.nome}`;
 
@@ -98,28 +104,41 @@
   }
 
   /**
-   * Carrega o contato selecionado via ?id= a partir de dados/contatos.json.
+   * Carrega o contato indicado por ?id= a partir de dados/contatos.json.
+   * Sem id válido ou sem contato correspondente, mostra aviso em vez de outra pessoa.
    */
   async function carregarContato() {
     const params = new URLSearchParams(window.location.search);
-    const idParam = Number(params.get('id')) || 1;
+    const id = Number(params.get('id'));
+
+    // Sem id na URL não há contato para mostrar
+    if (!id) {
+      nomeEl.textContent = 'Contato não encontrado';
+      return;
+    }
 
     try {
       const resposta = await fetch('dados/contatos.json');
-      if (resposta.ok) {
-        const contatos = await resposta.json();
-        const encontrado = contatos.find(function (c) {
-          return Number(c.id) === idParam;
-        });
-        if (encontrado) {
-          contatoAtual = encontrado;
-        }
+      if (!resposta.ok) {
+        throw new Error('Falha ao carregar contatos');
       }
+      const contatos = await resposta.json();
+      const encontrado = contatos.find(function (c) {
+        return Number(c.id) === id;
+      });
+
+      if (!encontrado) {
+        nomeEl.textContent = 'Contato não encontrado';
+        return;
+      }
+      contatoAtual = encontrado;
     } catch (e) {
-      // Mantém contato padrão caso não esteja rodando via servidor HTTP
+      // Falha ao ler o JSON (ex.: página aberta direto do arquivo, sem servidor)
+      nomeEl.textContent = 'Não foi possível carregar o contato';
+      return;
     }
 
-    // Inicializa estado padrão no localStorage na primeira visita se não existir
+    // Na primeira visita, grava o estado inicial do contato no localStorage
     if (localStorage.getItem(CHAVE_FAVORITOS) === null && contatoAtual.favorito) {
       salvarListaStorage(CHAVE_FAVORITOS, [contatoAtual.id]);
     }
