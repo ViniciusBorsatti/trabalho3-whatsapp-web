@@ -40,3 +40,6 @@ Prompt 6 - Converta a questão dos números para serem preenchidos automáticos 
 
  Prompt 7 - Melhore a página de login, para ficar no modelo da versão que já existe, igual tá feito aí na foto
  
+--------------------------------------------------------------------------------------------
+
+Prompt 8 - Ajude me a colocar comentários nos trechos desses códigos que te enviei ( login, cadastro, html e js)
