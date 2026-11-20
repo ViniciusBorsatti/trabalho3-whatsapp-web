@@ -1,26 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversas – WhatsApp Web</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/conversas.css">
-  <script src="js/tema.js"></script>
-  <script src="js/conversas.js" defer></script>
-</head>
-<body>
+<?php
+require_once __DIR__ . '/includes/funcoes.php';
+
+$tituloPagina = 'Conversas – WhatsApp Web';
+$cssPagina    = 'css/conversas.css';
+$caminhoBase  = '';
+$scriptsHead  = ['js/tema.js'];
+$scriptsDefer = ['js/conversas.js'];
+$tipoRodape   = 'aviso';
+
+require_once __DIR__ . '/includes/cabecalho.php';
+?>
   <div class="app" id="app">
     <nav class="barra-icones" aria-label="Menu principal">
       <div class="barra-icones-grupo">
-        <a href="conversas.html" class="btn-icone" aria-label="Conversas" aria-current="page"><i class="bi bi-chat-left-text-fill"></i></a>
+        <a href="conversas.php" class="btn-icone" aria-label="Conversas" aria-current="page"><i class="bi bi-chat-left-text-fill"></i></a>
         <button type="button" class="btn-icone" aria-label="Status"><i class="bi bi-record-circle"></i></button>
         <button type="button" class="btn-icone" aria-label="Canais"><i class="bi bi-chat-square-dots"></i></button>
         <button type="button" class="btn-icone" aria-label="Comunidades"><i class="bi bi-people"></i></button>
       </div>
       <div class="barra-icones-grupo">
-        <a href="configuracoes.html" class="avatar avatar-barra" aria-label="Perfil e configurações"><i class="bi bi-person-fill"></i></a>
+        <a href="configuracoes.php" class="avatar avatar-barra" aria-label="Perfil e configurações"><i class="bi bi-person-fill"></i></a>
       </div>
     </nav>
 
@@ -28,7 +27,7 @@
       <header class="painel-cabecalho">
         <h1>Conversas</h1>
         <div class="painel-acoes">
-          <a href="nova-conversa.html" class="btn-icone" aria-label="Nova conversa"><i class="bi bi-pencil-square"></i></a>
+          <a href="nova-conversa.php" class="btn-icone" aria-label="Nova conversa"><i class="bi bi-pencil-square"></i></a>
           <button type="button" class="btn-icone" aria-label="Mais opções"><i class="bi bi-three-dots-vertical"></i></button>
         </div>
       </header>
@@ -59,7 +58,7 @@
       <section class="chat" id="chat" aria-label="Conversa" hidden>
         <header class="chat-cabecalho">
           <button type="button" class="btn-icone btn-voltar" id="btn-voltar" aria-label="Voltar"><i class="bi bi-arrow-left"></i></button>
-          <a href="perfil.html" class="chat-contato">
+          <a href="perfil.php" class="chat-contato">
             <span class="avatar" id="chat-avatar"><i class="bi bi-person-fill"></i></span>
             <span class="chat-contato-info">
               <span class="chat-nome" id="chat-nome"></span>
@@ -86,7 +85,7 @@
       </section>
     </main>
 
-    <footer class="rodape-aviso">Clone do WhatsApp Web para fins educacionais, sem vínculo com o WhatsApp ou a Meta. Todos os dados são fictícios.</footer>
+    <?php require_once __DIR__ . '/includes/rodape.php'; ?>
   </div>
 
   <div class="menu-contexto" id="menu-contexto" role="menu" hidden>

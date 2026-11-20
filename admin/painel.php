@@ -21,7 +21,7 @@
       <ul>
         <li><a href="#contatos" aria-current="page"><i class="bi bi-person-lines-fill"></i> Contatos</a></li>
         <li><a href="#resumo"><i class="bi bi-chat-dots"></i> Mensagens</a></li>
-        <li><a href="../index.html"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        <li><a href="../index.php"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
       </ul>
     </nav>
 

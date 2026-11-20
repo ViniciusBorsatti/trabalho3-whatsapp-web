@@ -90,7 +90,7 @@
 
       const linkConversa = document.createElement('a');
       linkConversa.className = 'contato-principal';
-      linkConversa.href = `conversas.html?contato=${encodeURIComponent(contato.id)}`;
+      linkConversa.href = `conversas.php?contato=${encodeURIComponent(contato.id)}`;
 
       const img = document.createElement('img');
       img.className = 'contato-avatar';
@@ -117,7 +117,7 @@
 
       const linkPerfil = document.createElement('a');
       linkPerfil.className = 'contato-link-perfil';
-      linkPerfil.href = `perfil.html?id=${encodeURIComponent(contato.id)}`;
+      linkPerfil.href = `perfil.php?id=${encodeURIComponent(contato.id)}`;
       linkPerfil.textContent = 'Perfil';
       linkPerfil.setAttribute('aria-label', `Ver perfil de ${contato.nome}`);
 

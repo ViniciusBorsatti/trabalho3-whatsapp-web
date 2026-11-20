@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp Web — Nova conversa</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/nova-conversa.css">
-  <script src="js/tema.js" defer></script>
-  <script src="js/nova-conversa.js" defer></script>
-</head>
-<body>
+<?php
+require_once __DIR__ . '/includes/funcoes.php';
+
+$tituloPagina = 'WhatsApp Web — Nova conversa';
+$cssPagina    = 'css/nova-conversa.css';
+$caminhoBase  = '';
+$scriptsDefer = ['js/tema.js', 'js/nova-conversa.js'];
+$tipoRodape   = 'educacional';
+
+require_once __DIR__ . '/includes/cabecalho.php';
+?>
   <header class="barra-superior">
     <div class="barra-superior-conteudo">
       <div class="titulo-com-voltar">
-        <a href="conversas.html" class="btn-icone" aria-label="Voltar para conversas">
+        <a href="conversas.php" class="btn-icone" aria-label="Voltar para conversas">
           <i class="bi bi-arrow-left" aria-hidden="true"></i>
         </a>
         <div>
@@ -23,15 +21,14 @@
         </div>
       </div>
       <nav class="nav-atalhos" aria-label="Navegação do site">
-        <a href="conversas.html">Conversas</a>
-        <a href="perfil.html">Perfil</a>
-        <a href="configuracoes.html">Configurações</a>
+        <a href="conversas.php">Conversas</a>
+        <a href="perfil.php">Perfil</a>
+        <a href="configuracoes.php">Configurações</a>
       </nav>
     </div>
   </header>
 
   <main class="contatos-layout">
-    <!-- Painel esquerdo: busca, ações e lista alfabética de contatos (Figuras 12 e 13) -->
     <section class="contatos-painel" aria-label="Lista de contatos">
       <div class="contatos-busca-area">
         <div class="busca-box">
@@ -59,12 +56,9 @@
 
       <h2 class="lista-secao-titulo">Contatos no WhatsApp</h2>
 
-      <div id="lista-contatos" class="lista-contatos" aria-live="polite">
-        <!-- Preenchido via fetch('dados/contatos.json') em js/nova-conversa.js -->
-      </div>
+      <div id="lista-contatos" class="lista-contatos" aria-live="polite"></div>
     </section>
 
-    <!-- Painel direito no desktop (como na Figura 12) -->
     <aside class="contatos-boas-vindas" aria-label="Instruções">
       <div class="boas-vindas-conteudo">
         <i class="bi bi-whatsapp" aria-hidden="true"></i>
@@ -74,7 +68,6 @@
     </aside>
   </main>
 
-  <!-- Modal de cadastro de novo contato (Figura 12) -->
   <div
     class="modal-overlay"
     id="modal-novo-contato"
@@ -156,8 +149,4 @@
 
   <div class="toast-aviso" id="toast-contatos" role="status" aria-live="polite"></div>
 
-  <footer class="rodape-educacional">
-    <p>Clone do WhatsApp Web para fins educacionais. Sem vínculo com o WhatsApp/Meta. Dados fictícios.</p>
-  </footer>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/rodape.php'; ?>

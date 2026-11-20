@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp Web — Entrada</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/entrada.css">
-  <script src="js/tema.js" defer></script>
-  <script src="js/entrada.js" defer></script>
-</head>
-<body>
-  <!-- Cabeçalho institucional com logotipo da marca -->
+<?php
+require_once __DIR__ . '/includes/funcoes.php';
+
+$tituloPagina     = 'WhatsApp Web — Entrada';
+$cssPagina        = 'css/entrada.css';
+$caminhoBase      = '';
+$scriptsDefer     = ['js/tema.js', 'js/entrada.js'];
+$tipoRodape       = 'educacional';
+$incluirLinkAdmin = true;
+
+require_once __DIR__ . '/includes/cabecalho.php';
+?>
   <header class="entrada-topo">
     <div class="entrada-topo-conteudo">
       <div class="marca-logo">
@@ -19,14 +17,13 @@
         <span>WhatsApp Web</span>
       </div>
       <nav class="entrada-nav" aria-label="Acesso rápido">
-        <a href="login.html">Entrar no celular</a>
-        <a href="cadastro.html">Criar conta</a>
+        <a href="login.php">Entrar no celular</a>
+        <a href="cadastro.php">Criar conta</a>
       </nav>
     </div>
   </header>
 
   <main class="entrada-principal">
-    <!-- Cartão Desktop: passo a passo + QR Code (Figura 4 do wireframe) -->
     <section class="entrada-cartao" aria-labelledby="titulo-entrada">
       <div class="entrada-desktop">
         <article class="entrada-instrucoes">
@@ -46,16 +43,15 @@
           <div class="entrada-links-auxiliares">
             <p>
               Ainda não tem conta?
-              <a href="cadastro.html">Crie pelo celular.</a>
+              <a href="cadastro.php">Crie pelo celular.</a>
             </p>
             <p class="texto-apoio">
               Acesse este mesmo endereço no navegador do celular ou
-              <a href="conectar.html">simule a tela do celular ao ler o QR</a>.
+              <a href="conectar.php">simule a tela do celular ao ler o QR</a>.
             </p>
           </div>
         </article>
 
-        <!-- Área do QR Code com contagem regressiva de 60s (RN04) -->
         <aside class="entrada-qr-area" aria-label="Código QR para conexão">
           <div class="qr-moldura" id="qr-moldura">
             <img
@@ -93,7 +89,6 @@
         </aside>
       </div>
 
-      <!-- Versão Mobile: aviso para abrir no PC + botões do app (Figura 5 do wireframe) -->
       <div class="entrada-mobile">
         <div class="mobile-icone" aria-hidden="true">
           <i class="bi bi-whatsapp"></i>
@@ -104,8 +99,8 @@
         </p>
 
         <div class="mobile-acoes">
-          <a href="login.html" class="btn btn-primario">Entrar no app</a>
-          <a href="cadastro.html" class="btn btn-secundario">Criar conta</a>
+          <a href="login.php" class="btn btn-primario">Entrar no app</a>
+          <a href="cadastro.php" class="btn btn-secundario">Criar conta</a>
         </div>
 
         <div class="mobile-dica">
@@ -116,11 +111,4 @@
     </section>
   </main>
 
-  <footer class="rodape-educacional">
-    <p>
-      Clone do WhatsApp Web para fins educacionais. Sem vínculo com o WhatsApp/Meta. Dados fictícios.
-      · <a href="admin/login.html">Área do administrador</a>
-    </p>
-  </footer>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/rodape.php'; ?>

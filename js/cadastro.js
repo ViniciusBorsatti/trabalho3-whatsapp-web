@@ -5,14 +5,10 @@ const telefone = document.getElementById('telefone');
 const email = document.getElementById('email');
 const senha = document.getElementById('senha');
 const confirmaSenha = document.getElementById('confirma-senha');
-const toast = document.getElementById('toast');
 
 // Formatos aceitos: telefone (49) 99999-0001 e e-mail com @ e domínio
 const REGEX_TELEFONE = /^\(\d{2}\) \d{5}-\d{4}$/;
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Guarda o timer do toast para poder reiniciá-lo
-let temporizadorToast = null;
 
 // Nome não pode ficar vazio nem só com espaços
 function validarNome() {
@@ -97,7 +93,7 @@ function validarConfirmacao() {
 // Regra separada para a confirmação, usada também ao digitar na senha
 const regraConfirmacao = { campo: confirmaSenha, validar: validarConfirmacao };
 
-// Lista de todas as regras, validadas uma a uma no envio
+// Lista de todas as regras, validadas no envio
 const regras = [
   { campo: nome, validar: validarNome },
   { campo: telefone, validar: validarTelefone },
@@ -133,16 +129,6 @@ function validarCampo(regra) {
   return true;
 }
 
-// Exibe o aviso de sucesso por 3 segundos
-function mostrarToast(texto) {
-  toast.textContent = texto;
-  toast.classList.add('visivel');
-  clearTimeout(temporizadorToast);
-  temporizadorToast = setTimeout(() => {
-    toast.classList.remove('visivel');
-  }, 3000);
-}
-
 // Ao sair do campo, valida; ao digitar num campo já com erro, revalida
 regras.forEach((regra) => {
   regra.campo.addEventListener('blur', () => {
@@ -163,14 +149,11 @@ senha.addEventListener('input', () => {
   }
 });
 
-// Ao enviar: impede o recarregamento da página e valida tudo
+// Ao enviar: se houver erro, impede o envio e foca no primeiro campo inválido.
+// Se estiver tudo certo, o formulário segue para o servidor (cadastro.php)
 form.addEventListener('submit', (evento) => {
-  // preventDefault evita que a página recarregue e apague os erros
-  evento.preventDefault();
-
   let primeiroInvalido = null;
 
-  // Valida todos os campos para mostrar todos os erros de uma vez
   regras.forEach((regra) => {
     const valido = validarCampo(regra);
     if (!valido && primeiroInvalido === null) {
@@ -178,14 +161,9 @@ form.addEventListener('submit', (evento) => {
     }
   });
 
-  // Foca no primeiro campo com erro
   if (primeiroInvalido !== null) {
+    // preventDefault impede o envio quando há erro
+    evento.preventDefault();
     primeiroInvalido.focus();
-    return;
   }
-
-  // Formulário válido: mostra o aviso e limpa os campos
-  mostrarToast('Conta criada com sucesso!');
-  form.reset();
-  nome.focus();
 });

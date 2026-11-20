@@ -1,35 +1,31 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp Web — Perfil do contato</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/perfil.css">
-  <script src="js/tema.js" defer></script>
-  <script src="js/perfil.js" defer></script>
-</head>
-<body>
-  <!-- Cabeçalho com retorno às conversas e navegação secundária -->
+<?php
+require_once __DIR__ . '/includes/funcoes.php';
+
+$tituloPagina = 'WhatsApp Web — Perfil do contato';
+$cssPagina    = 'css/perfil.css';
+$caminhoBase  = '';
+$scriptsDefer = ['js/tema.js', 'js/perfil.js'];
+$tipoRodape   = 'educacional';
+
+require_once __DIR__ . '/includes/cabecalho.php';
+?>
   <header class="barra-superior">
     <div class="barra-superior-conteudo">
       <div class="titulo-com-voltar">
-        <a href="conversas.html" class="btn-icone" aria-label="Voltar para conversas">
+        <a href="conversas.php" class="btn-icone" aria-label="Voltar para conversas">
           <i class="bi bi-arrow-left" aria-hidden="true"></i>
         </a>
         <h1>Dados do contato</h1>
       </div>
       <nav class="nav-atalhos" aria-label="Navegação do site">
-        <a href="conversas.html">Conversas</a>
-        <a href="nova-conversa.html">Contatos</a>
-        <a href="configuracoes.html">Configurações</a>
+        <a href="conversas.php">Conversas</a>
+        <a href="nova-conversa.php">Contatos</a>
+        <a href="configuracoes.php">Configurações</a>
       </nav>
     </div>
   </header>
 
   <main class="perfil-container">
-    <!-- Painel principal do perfil do contato (Figuras 10 e 11) -->
     <article class="perfil-painel">
       <section class="perfil-cabecalho" aria-label="Informações principais do contato">
         <img
@@ -68,13 +64,11 @@
         </div>
       </section>
 
-      <!-- Seção de recado -->
       <section class="perfil-bloco" aria-labelledby="titulo-recado">
         <h3 id="titulo-recado" class="bloco-rotulo">Recado</h3>
         <p id="perfil-recado" class="bloco-valor">Disponível</p>
       </section>
 
-      <!-- Seção de mídias, links e docs (ilustrativa conforme escopo) -->
       <section class="perfil-bloco" aria-labelledby="titulo-midias">
         <div class="bloco-linha">
           <h3 id="titulo-midias" class="bloco-rotulo">Mídia, links e docs</h3>
@@ -87,7 +81,6 @@
         </div>
       </section>
 
-      <!-- Ações do contato: Favoritar, Bloquear (RN03), Denunciar e Apagar conversa -->
       <section class="perfil-bloco perfil-acoes" aria-label="Ações sobre o contato">
         <button type="button" class="acao-item" id="btn-favoritar">
           <i class="bi bi-star" id="icone-favoritar" aria-hidden="true"></i>
@@ -112,7 +105,6 @@
     </article>
   </main>
 
-  <!-- Modal de denúncia (Figura 10 do wireframe) -->
   <div
     class="modal-overlay"
     id="modal-denuncia"
@@ -174,11 +166,6 @@
     </div>
   </div>
 
-  <!-- Aviso escuro temporário de sucesso -->
   <div class="toast-aviso" id="toast-perfil" role="status" aria-live="polite"></div>
 
-  <footer class="rodape-educacional">
-    <p>Clone do WhatsApp Web para fins educacionais. Sem vínculo com o WhatsApp/Meta. Dados fictícios.</p>
-  </footer>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/rodape.php'; ?>

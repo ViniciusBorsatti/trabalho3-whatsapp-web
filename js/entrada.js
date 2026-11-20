@@ -119,7 +119,7 @@
     }, 1000);
   }
 
-  // Simula leitura do QR code e redireciona para conversas.html
+  // Simula leitura do QR code e redireciona para conversas.php
   if (btnSimular) {
     btnSimular.addEventListener('click', function () {
       if (qrExpirado) {
@@ -133,7 +133,7 @@
       btnSimular.disabled = true;
 
       setTimeout(function () {
-        window.location.href = 'conversas.html';
+        window.location.href = 'conversas.php';
       }, 400);
     });
   }

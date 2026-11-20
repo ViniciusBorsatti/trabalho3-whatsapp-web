@@ -83,7 +83,7 @@
     localStorage.removeItem('whatsapp_clone_manter_conectado');
     mostrarToast('Sessão encerrada. Redirecionando...');
     setTimeout(function () {
-      window.location.href = 'index.html';
+      window.location.href = 'index.php';
     }, 600);
   });
 

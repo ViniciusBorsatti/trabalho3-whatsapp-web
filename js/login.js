@@ -4,13 +4,29 @@ const telefone = document.getElementById('telefone');
 const senha = document.getElementById('senha');
 const btnMostrarSenha = document.getElementById('btn-mostrar-senha');
 const erroGeral = document.getElementById('erro-geral');
-const toast = document.getElementById('toast');
 
 // Mesmo formato do cadastro: (49) 99999-0001
 const REGEX_TELEFONE = /^\(\d{2}\) \d{5}-\d{4}$/;
 
-// Guarda o timer do toast para poder reiniciá-lo
-let temporizadorToast = null;
+// Confere se o telefone está preenchido e no formato certo
+function validarTelefone() {
+  const valor = telefone.value.trim();
+  if (valor === '') {
+    return 'Informe o telefone.';
+  }
+  if (!REGEX_TELEFONE.test(valor)) {
+    return 'Use o formato (49) 99999-0001.';
+  }
+  return '';
+}
+
+// Senha não pode ficar vazia (o mínimo de 8 caracteres é checado no servidor)
+function validarSenha() {
+  if (senha.value === '') {
+    return 'Informe a senha.';
+  }
+  return '';
+}
 
 // Máscara do telefone (mesma lógica do cadastro)
 function formatarTelefone(valor) {
@@ -31,26 +47,6 @@ function formatarTelefone(valor) {
     return '(' + numeros.slice(0, 2) + ') ' + numeros.slice(2, 6) + '-' + numeros.slice(6);
   }
   return '(' + numeros.slice(0, 2) + ') ' + numeros.slice(2, 7) + '-' + numeros.slice(7);
-}
-
-// Confere se o telefone está preenchido e no formato certo
-function validarTelefone() {
-  const valor = telefone.value.trim();
-  if (valor === '') {
-    return 'Informe o telefone.';
-  }
-  if (!REGEX_TELEFONE.test(valor)) {
-    return 'Use o formato (49) 99999-0001.';
-  }
-  return '';
-}
-
-// Senha não pode ficar vazia (o mínimo de 8 caracteres é checado no envio)
-function validarSenha() {
-  if (senha.value === '') {
-    return 'Informe a senha.';
-  }
-  return '';
 }
 
 // Lista de regras validadas no envio e ao sair dos campos
@@ -84,16 +80,6 @@ function validarCampo(regra) {
   return true;
 }
 
-// Exibe o aviso por 3 segundos
-function mostrarToast(texto) {
-  toast.textContent = texto;
-  toast.classList.add('visivel');
-  clearTimeout(temporizadorToast);
-  temporizadorToast = setTimeout(() => {
-    toast.classList.remove('visivel');
-  }, 3000);
-}
-
 // A máscara roda a cada tecla ou colagem no telefone
 telefone.addEventListener('input', () => {
   telefone.value = formatarTelefone(telefone.value);
@@ -122,14 +108,11 @@ btnMostrarSenha.addEventListener('click', () => {
   btnMostrarSenha.querySelector('i').className = mostrar ? 'bi bi-eye-slash' : 'bi bi-eye';
 });
 
-// Ao enviar: impede o recarregamento e valida os campos
+// Ao enviar: se houver erro, impede o envio e foca no primeiro campo inválido.
+// Se estiver tudo certo, o formulário segue para o servidor (login.php)
 form.addEventListener('submit', (evento) => {
-  // preventDefault mantém a página e os erros na tela
-  evento.preventDefault();
-
   let primeiroInvalido = null;
 
-  // Valida todos os campos para mostrar todos os erros de uma vez
   regras.forEach((regra) => {
     const valido = validarCampo(regra);
     if (!valido && primeiroInvalido === null) {
@@ -137,17 +120,10 @@ form.addEventListener('submit', (evento) => {
     }
   });
 
-  // Se houver erro, mostra a mensagem geral e foca no primeiro campo inválido
   if (primeiroInvalido !== null) {
+    // preventDefault impede o envio quando há erro
+    evento.preventDefault();
     erroGeral.textContent = 'Revise os campos destacados.';
     primeiroInvalido.focus();
-    return;
   }
-
-  // Login válido: limpa o erro geral, mostra o aviso e segue para as conversas
-  erroGeral.textContent = '';
-  mostrarToast('Login realizado com sucesso!');
-  setTimeout(() => {
-    window.location.href = 'conversas.html';
-  }, 1000);
 });

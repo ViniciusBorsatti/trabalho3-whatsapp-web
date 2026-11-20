@@ -70,7 +70,7 @@ btnConectar.addEventListener('click', () => {
   erroConexao.textContent = '';
   mostrarToast('Computador conectado!');
   setTimeout(() => {
-    window.location.href = 'conversas.html';
+    window.location.href = 'conversas.php';
   }, 1000);
 });
 
@@ -78,7 +78,7 @@ btnNovoQr.addEventListener('click', iniciarContagem);
 
 btnCancelar.addEventListener('click', () => {
   clearInterval(intervalo);
-  window.location.href = 'index.html';
+  window.location.href = 'index.php';
 });
 
 preencherHorario();
