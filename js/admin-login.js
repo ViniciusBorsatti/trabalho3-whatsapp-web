@@ -1,14 +1,14 @@
+// Referências aos elementos do formulário de login do administrador
 const form = document.getElementById('form-admin-login');
 const email = document.getElementById('email');
 const senha = document.getElementById('senha');
 const btnMostrarSenha = document.getElementById('btn-mostrar-senha');
 const erroGeral = document.getElementById('erro-geral');
-const toast = document.getElementById('toast');
 
+// Formato aceito para o e-mail: algo@dominio.extensao
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-let temporizadorToast = null;
-
+// Confere se o e-mail foi preenchido e tem formato válido
 function validarEmail() {
   const valor = email.value.trim();
   if (valor === '') {
@@ -20,33 +20,35 @@ function validarEmail() {
   return '';
 }
 
+// Senha não pode ficar vazia (o mínimo de 8 caracteres é conferido também no servidor)
 function validarSenha() {
   if (senha.value === '') {
     return 'Informe a senha.';
   }
-  if (senha.value.length < 8) {
-    return 'A senha precisa ter no mínimo 8 caracteres.';
-  }
   return '';
 }
 
+// Lista de regras validadas no envio e ao sair dos campos
 const regras = [
   { campo: email, validar: validarEmail },
   { campo: senha, validar: validarSenha }
 ];
 
+// Mostra a mensagem embaixo do campo e marca o campo como inválido
 function mostrarErro(campo, mensagem) {
   document.getElementById('erro-' + campo.id).textContent = mensagem;
   campo.classList.add('campo-invalido');
   campo.setAttribute('aria-invalid', 'true');
 }
 
+// Remove a mensagem e a marcação de erro do campo
 function limparErro(campo) {
   document.getElementById('erro-' + campo.id).textContent = '';
   campo.classList.remove('campo-invalido');
   campo.removeAttribute('aria-invalid');
 }
 
+// Executa a regra e mostra ou limpa o erro. Retorna true se o campo está válido
 function validarCampo(regra) {
   const mensagem = regra.validar();
   if (mensagem) {
@@ -57,15 +59,7 @@ function validarCampo(regra) {
   return true;
 }
 
-function mostrarToast(texto) {
-  toast.textContent = texto;
-  toast.classList.add('visivel');
-  clearTimeout(temporizadorToast);
-  temporizadorToast = setTimeout(() => {
-    toast.classList.remove('visivel');
-  }, 3000);
-}
-
+// Ao sair do campo, valida; ao digitar num campo já com erro, revalida
 regras.forEach((regra) => {
   regra.campo.addEventListener('blur', () => {
     validarCampo(regra);
@@ -78,17 +72,19 @@ regras.forEach((regra) => {
   });
 });
 
+// Botão de olho: alterna o tipo do campo entre senha e texto
 btnMostrarSenha.addEventListener('click', () => {
   const mostrar = senha.type === 'password';
   senha.type = mostrar ? 'text' : 'password';
+  // aria-pressed informa a leitores de tela se o botão está ativado
   btnMostrarSenha.setAttribute('aria-pressed', String(mostrar));
   btnMostrarSenha.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
   btnMostrarSenha.querySelector('i').className = mostrar ? 'bi bi-eye-slash' : 'bi bi-eye';
 });
 
+// Ao enviar: se houver erro, impede o envio e foca no primeiro campo inválido.
+// Se estiver tudo certo, o formulário segue para o servidor (admin/login.php), que confere o login
 form.addEventListener('submit', (evento) => {
-  evento.preventDefault();
-
   let primeiroInvalido = null;
 
   regras.forEach((regra) => {
@@ -99,14 +95,9 @@ form.addEventListener('submit', (evento) => {
   });
 
   if (primeiroInvalido !== null) {
+    // preventDefault impede o envio quando há erro
+    evento.preventDefault();
     erroGeral.textContent = 'Revise os campos destacados.';
     primeiroInvalido.focus();
-    return;
   }
-
-  erroGeral.textContent = '';
-  mostrarToast('Login de administrador realizado!');
-  setTimeout(() => {
-    window.location.href = 'painel.html';
-  }, 1000);
 });

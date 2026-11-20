@@ -1,34 +1,32 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp Web — Configurações</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/configuracoes.css">
-  <script src="js/tema.js"></script>
-  <script src="js/configuracoes.js" defer></script>
-</head>
-<body>
+<?php
+require_once __DIR__ . '/includes/funcoes.php';
+
+$tituloPagina = 'WhatsApp Web — Configurações';
+$cssPagina    = 'css/configuracoes.css';
+$caminhoBase  = '';
+$scriptsHead  = ['js/tema.js'];
+$scriptsDefer = ['js/configuracoes.js'];
+$tipoRodape   = 'educacional';
+
+require_once __DIR__ . '/includes/cabecalho.php';
+?>
   <header class="barra-superior">
     <div class="barra-superior-conteudo">
       <div class="titulo-com-voltar">
-        <a href="conversas.html" class="btn-icone" aria-label="Voltar para conversas">
+        <a href="conversas.php" class="btn-icone" aria-label="Voltar para conversas">
           <i class="bi bi-arrow-left" aria-hidden="true"></i>
         </a>
         <h1>Configurações</h1>
       </div>
       <nav class="nav-atalhos" aria-label="Navegação do site">
-        <a href="conversas.html">Conversas</a>
-        <a href="nova-conversa.html">Contatos</a>
-        <a href="perfil.html">Perfil</a>
+        <a href="conversas.php">Conversas</a>
+        <a href="nova-conversa.php">Contatos</a>
+        <a href="perfil.php">Perfil</a>
       </nav>
     </div>
   </header>
 
   <main class="config-layout">
-    <!-- Painel esquerdo: busca, perfil do usuário e lista de opções (Figuras 14 e 15) -->
     <section class="config-painel" aria-label="Menu de configurações">
       <div class="config-busca-area">
         <div class="busca-box">
@@ -42,7 +40,6 @@
         </div>
       </div>
 
-      <!-- Perfil do usuário (editável) -->
       <button type="button" class="perfil-usuario-card" id="btn-editar-perfil">
         <img
           src="img/avatar-padrao.svg"
@@ -57,7 +54,6 @@
         <i class="bi bi-pencil-square icone-editar" aria-hidden="true"></i>
       </button>
 
-      <!-- Lista de configurações -->
       <ul class="config-lista" id="config-lista">
         <li class="config-item-wrapper" data-termo="conta segurança dados">
           <button type="button" class="config-item" data-info="Conta">
@@ -136,7 +132,7 @@
         </li>
 
         <li class="config-item-wrapper" data-termo="dispositivos conectados computadores">
-          <a href="conectar.html" class="config-item">
+          <a href="conectar.php" class="config-item">
             <i class="bi bi-laptop" aria-hidden="true"></i>
             <div>
               <strong>Dispositivos conectados</strong>
@@ -157,7 +153,6 @@
       </ul>
     </section>
 
-    <!-- Painel direito: Tabela de atalhos do teclado (requisito de tabela com thead, tbody e :nth-child) -->
     <section class="atalhos-painel" id="secao-atalhos" aria-labelledby="titulo-atalhos">
       <div class="atalhos-cartao">
         <div class="atalhos-cabecalho">
@@ -225,7 +220,6 @@
     </section>
   </main>
 
-  <!-- Modal para edição rápida de nome e recado do usuário -->
   <div
     class="modal-overlay"
     id="modal-perfil-usuario"
@@ -263,8 +257,4 @@
 
   <div class="toast-aviso" id="toast-config" role="status" aria-live="polite"></div>
 
-  <footer class="rodape-educacional">
-    <p>Clone do WhatsApp Web para fins educacionais. Sem vínculo com o WhatsApp/Meta. Dados fictícios.</p>
-  </footer>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/rodape.php'; ?>

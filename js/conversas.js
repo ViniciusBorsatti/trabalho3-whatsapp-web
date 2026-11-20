@@ -150,7 +150,7 @@ function abrirConversa(id) {
   chat.hidden = false;
   chatNome.textContent = conversa.nome;
     // aponta o link do cabeçalho para o perfil do contato aberto
-  document.querySelector(".chat-contato").href = "perfil.html?id=" + conversa.id;
+  document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.id;
 
   if (conversa.bloqueado) {
     chatStatus.textContent = "Você bloqueou este contato";
