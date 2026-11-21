@@ -78,26 +78,10 @@
     });
   });
 
-  // Desconectar e voltar para a página de Entrada
-  btnDesconectar.addEventListener('click', function () {
-    localStorage.removeItem('whatsapp_clone_manter_conectado');
-    mostrarToast('Sessão encerrada. Redirecionando...');
-    setTimeout(function () {
-      window.location.href = 'index.php';
-    }, 600);
-  });
-
-  // Carregar e editar perfil do usuário localmente
+  // O perfil vem do PHP e é salvo no banco pelo formulário POST.
   function carregarPerfilUsuario() {
-    try {
-      const salvo = JSON.parse(localStorage.getItem(CHAVE_PERFIL_USUARIO));
-      if (salvo && salvo.nome) {
-        usuarioNomeEl.textContent = salvo.nome;
-        usuarioRecadoEl.textContent = salvo.recado || 'Disponível';
-      }
-    } catch (e) {
-      // Mantém padrão
-    }
+    inputUsuarioNome.value = usuarioNomeEl.textContent;
+    inputUsuarioRecado.value = usuarioRecadoEl.textContent;
   }
 
   function abrirModalUsuario() {
@@ -131,21 +115,16 @@
   });
 
   formUsuario.addEventListener('submit', function (evento) {
-    evento.preventDefault();
     const nome = inputUsuarioNome.value.trim();
-    const recado = inputUsuarioRecado.value.trim() || 'Disponível';
 
     if (!nome) {
+      evento.preventDefault();
       erroUsuarioNome.textContent = 'O nome não pode ficar vazio.';
       inputUsuarioNome.classList.add('campo-invalido');
       inputUsuarioNome.focus();
       return;
     }
 
-    localStorage.setItem(CHAVE_PERFIL_USUARIO, JSON.stringify({ nome: nome, recado: recado }));
-    carregarPerfilUsuario();
-    fecharModalUsuario();
-    mostrarToast('Perfil atualizado.');
   });
 
   sincronizarTema();

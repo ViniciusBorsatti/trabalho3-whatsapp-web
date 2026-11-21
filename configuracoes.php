@@ -1,5 +1,33 @@
 <?php
+require_once __DIR__ . '/includes/conexao.php';
 require_once __DIR__ . '/includes/funcoes.php';
+require_once __DIR__ . '/includes/verifica-usuario.php';
+
+$usuarioId = filter_var(usuarioLogado()['id'] ?? null, FILTER_VALIDATE_INT);
+$stmt = $pdo->prepare('SELECT id, nome, recado FROM usuarios WHERE id = ? LIMIT 1');
+$stmt->execute([$usuarioId]);
+$usuarioAtual = $stmt->fetch();
+if (!$usuarioAtual) {
+    unset($_SESSION['usuario']);
+    mensagem('erro', 'Entre novamente para acessar as configurações.');
+    redirecionar('login.php');
+}
+$erroPerfil = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'editar-perfil') {
+    $nomePerfil = limpar(filter_input(INPUT_POST, 'nome', FILTER_UNSAFE_RAW) ?? '');
+    $recadoPerfil = limpar(filter_input(INPUT_POST, 'recado', FILTER_UNSAFE_RAW) ?? '');
+    if ($nomePerfil === '' || comprimentoTexto($nomePerfil) > 100) {
+        $erroPerfil = 'Informe um nome com até 100 caracteres.';
+    } elseif (comprimentoTexto($recadoPerfil) > 150) {
+        $erroPerfil = 'O recado deve ter até 150 caracteres.';
+    } else {
+        atualizarPerfilUsuario($pdo, $usuarioId, $nomePerfil, $recadoPerfil);
+        $_SESSION['usuario']['nome'] = $nomePerfil;
+        mensagem('sucesso', 'Perfil atualizado com sucesso.');
+        redirecionar('configuracoes.php');
+    }
+}
+$flashPerfil = mensagem();
 
 $tituloPagina = 'WhatsApp Web — Configurações';
 $cssPagina    = 'css/configuracoes.css';
@@ -21,12 +49,13 @@ require_once __DIR__ . '/includes/cabecalho.php';
       <nav class="nav-atalhos" aria-label="Navegação do site">
         <a href="conversas.php">Conversas</a>
         <a href="nova-conversa.php">Contatos</a>
-        <a href="perfil.php">Perfil</a>
       </nav>
     </div>
   </header>
 
   <main class="config-layout">
+    <?php if ($flashPerfil): ?><p class="msg-sucesso" role="status"><?= esc($flashPerfil['texto']) ?></p><?php endif; ?>
+    <?php if ($erroPerfil): ?><p class="erro-geral" role="alert"><?= esc($erroPerfil) ?></p><?php endif; ?>
     <section class="config-painel" aria-label="Menu de configurações">
       <div class="config-busca-area">
         <div class="busca-box">
@@ -43,13 +72,13 @@ require_once __DIR__ . '/includes/cabecalho.php';
       <button type="button" class="perfil-usuario-card" id="btn-editar-perfil">
         <img
           src="img/avatar-padrao.svg"
-          alt="Avatar padrão do usuário Jadson Butzk"
+          alt="Avatar padrão do usuário <?= esc($usuarioAtual['nome']) ?>"
           width="60"
           height="60"
         >
         <div class="perfil-usuario-texto">
-          <strong id="usuario-nome">Jadson Butzk</strong>
-          <span id="usuario-recado">Disponível</span>
+          <strong id="usuario-nome"><?= esc($erroPerfil ? ($_POST['nome'] ?? $usuarioAtual['nome']) : $usuarioAtual['nome']) ?></strong>
+          <span id="usuario-recado"><?= esc($erroPerfil ? ($_POST['recado'] ?? $usuarioAtual['recado']) : ($usuarioAtual['recado'] ?: 'Disponível')) ?></span>
         </div>
         <i class="bi bi-pencil-square icone-editar" aria-hidden="true"></i>
       </button>
@@ -142,13 +171,13 @@ require_once __DIR__ . '/includes/cabecalho.php';
         </li>
 
         <li class="config-item-wrapper" data-termo="desconectar sair encerrar sessao">
-          <button type="button" class="config-item config-desconectar" id="btn-desconectar">
+          <a href="logout.php" class="config-item config-desconectar" id="btn-desconectar">
             <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
             <div>
               <strong>Desconectar</strong>
               <span>Encerrar sessão neste navegador</span>
             </div>
-          </button>
+          </a>
         </li>
       </ul>
     </section>
@@ -221,7 +250,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
   </main>
 
   <div
-    class="modal-overlay"
+    class="modal-overlay <?= $erroPerfil ? 'aberto' : '' ?>"
     id="modal-perfil-usuario"
     role="dialog"
     aria-modal="true"
@@ -235,16 +264,17 @@ require_once __DIR__ . '/includes/cabecalho.php';
         </button>
       </div>
 
-      <form id="form-perfil-usuario" novalidate>
+      <form id="form-perfil-usuario" action="configuracoes.php" method="post" novalidate>
+        <input type="hidden" name="acao" value="editar-perfil">
         <div class="campo-grupo">
           <label for="input-usuario-nome">Seu nome *</label>
-          <input type="text" id="input-usuario-nome" class="campo-controle" required>
-          <span class="erro-campo" id="erro-usuario-nome" role="alert"></span>
+          <input type="text" id="input-usuario-nome" name="nome" class="campo-controle" value="<?= esc($_POST['nome'] ?? $usuarioAtual['nome']) ?>" maxlength="100" required>
+          <span class="erro-campo" id="erro-usuario-nome" role="alert"><?= esc($erroPerfil) ?></span>
         </div>
 
         <div class="campo-grupo">
           <label for="input-usuario-recado">Recado</label>
-          <input type="text" id="input-usuario-recado" class="campo-controle" maxlength="120">
+          <input type="text" id="input-usuario-recado" name="recado" class="campo-controle" value="<?= esc($_POST['recado'] ?? $usuarioAtual['recado']) ?>" maxlength="150">
         </div>
 
         <div class="modal-acoes">
