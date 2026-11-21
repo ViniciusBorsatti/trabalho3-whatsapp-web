@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $erros[] = 'Digite um e-mail válido.';
     }
-    if (mb_strlen($senha) < 8) {
+    if (comprimentoTexto($senha) < 8) {
         $erros[] = 'A senha precisa ter no mínimo 8 caracteres.';
     }
     if ($senha !== $confirma) {
