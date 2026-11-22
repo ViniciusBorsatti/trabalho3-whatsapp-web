@@ -1,12 +1,15 @@
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background: var(--painel);
 }
 
 .admin {
+  flex: 1;
   display: grid;
   grid-template-columns: 240px 1fr;
-  grid-template-rows: 64px 1fr auto;
-  min-height: 100vh;
+  grid-template-rows: 64px 1fr;
 }
 
 .admin-topo {
@@ -83,7 +86,7 @@ body {
 
 .resumo {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
@@ -211,9 +214,25 @@ body {
   gap: 12px;
 }
 
-.admin > .rodape-aviso {
-  grid-column: 1 / -1;
-  grid-row: 3;
+.admin-usuario {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.contatos + .contatos {
+  margin-top: 24px;
+}
+
+.btn-novo {
+  width: auto;
+  padding: 8px 18px;
+}
+
+.tabela caption a {
+  color: var(--verde-escuro);
 }
 
 @media (max-width: 1024px) {
@@ -229,7 +248,7 @@ body {
 @media (max-width: 767px) {
   .admin {
     grid-template-columns: 1fr;
-    grid-template-rows: 56px auto 1fr auto;
+    grid-template-rows: 56px auto 1fr;
   }
 
   .admin-topo {
@@ -257,8 +276,13 @@ body {
     padding: 16px;
   }
 
-  .admin > .rodape-aviso {
-    grid-row: 4;
+  .admin-usuario {
+    display: none;
+  }
+
+  .tabela {
+    display: block;
+    overflow-x: auto;
   }
 
   .resumo {

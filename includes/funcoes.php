@@ -145,3 +145,89 @@ function atualizarPerfilUsuario(PDO $pdo, int $usuarioId, string $nome, string $
     $stmt->execute([$nome, $recado, $usuarioId]);
 }
 
+
+/* ============================== Vinicius ============================== */
+function telefoneValido(string $telefone): bool
+{
+    return (bool)preg_match('/^\(\d{2}\) \d{5}-\d{4}$/', $telefone);
+}
+
+function telefoneEmUso(PDO $pdo, string $telefone, int $ignorarId = 0): bool
+{
+    $stmt = $pdo->prepare('SELECT id FROM contatos WHERE telefone = ? AND id <> ? LIMIT 1');
+    $stmt->execute([$telefone, $ignorarId]);
+    return (bool)$stmt->fetch();
+}
+
+function validarContato(PDO $pdo, array $dados, int $id = 0): array
+{
+    $erros = [];
+    if ($dados['nome'] === '' || comprimentoTexto($dados['nome']) > 100) {
+        $erros['nome'] = 'Informe um nome com até 100 caracteres.';
+    }
+    if (!telefoneValido($dados['telefone'])) {
+        $erros['telefone'] = 'Use o formato (49) 99999-0001.';
+    } elseif (telefoneEmUso($pdo, $dados['telefone'], $id)) {
+        $erros['telefone'] = 'Telefone já cadastrado.';
+    }
+    if (comprimentoTexto($dados['recado']) > 150) {
+        $erros['recado'] = 'O recado deve ter até 150 caracteres.';
+    }
+    return $erros;
+}
+
+function listarContatosPainel(PDO $pdo, string $busca = ''): array
+{
+    $termo = '%' . $busca . '%';
+    $stmt = $pdo->prepare(
+        'SELECT c.id, c.nome, c.telefone, c.recado, c.bloqueado, COUNT(m.id) AS total_mensagens
+         FROM contatos c
+         LEFT JOIN conversas cv ON cv.contato_id = c.id
+         LEFT JOIN mensagens m ON m.conversa_id = cv.id
+         WHERE c.grupo = 0 AND (c.nome LIKE ? OR c.telefone LIKE ?)
+         GROUP BY c.id
+         ORDER BY c.nome'
+    );
+    $stmt->execute([$termo, $termo]);
+    return $stmt->fetchAll();
+}
+
+function resumoPainel(PDO $pdo): array
+{
+    return [
+        'contatos'   => (int)$pdo->query('SELECT COUNT(*) FROM contatos WHERE grupo = 0')->fetchColumn(),
+        'mensagens'  => (int)$pdo->query('SELECT COUNT(*) FROM mensagens')->fetchColumn(),
+        'bloqueados' => (int)$pdo->query('SELECT COUNT(*) FROM contatos WHERE grupo = 0 AND bloqueado = 1')->fetchColumn(),
+        'denuncias'  => (int)$pdo->query('SELECT COUNT(*) FROM denuncias')->fetchColumn(),
+    ];
+}
+
+function inserirContatoPainel(PDO $pdo, array $dados): void
+{
+    $stmt = $pdo->prepare('INSERT INTO contatos (nome, telefone, recado, bloqueado) VALUES (?, ?, ?, ?)');
+    $stmt->execute([$dados['nome'], $dados['telefone'], $dados['recado'], $dados['bloqueado']]);
+}
+
+function atualizarContatoPainel(PDO $pdo, int $id, array $dados): void
+{
+    $stmt = $pdo->prepare('UPDATE contatos SET nome = ?, telefone = ?, recado = ?, bloqueado = ? WHERE id = ?');
+    $stmt->execute([$dados['nome'], $dados['telefone'], $dados['recado'], $dados['bloqueado'], $id]);
+    $stmt = $pdo->prepare('UPDATE conversas SET nome = ? WHERE contato_id = ?');
+    $stmt->execute([$dados['nome'], $id]);
+}
+
+function excluirContatoPainel(PDO $pdo, int $id): void
+{
+    $stmt = $pdo->prepare('DELETE FROM contatos WHERE id = ?');
+    $stmt->execute([$id]);
+}
+
+function listarDenuncias(PDO $pdo): array
+{
+    return $pdo->query(
+        'SELECT d.id, d.motivo, d.descricao, d.bloqueou, d.criada_em, c.nome AS contato
+         FROM denuncias d
+         JOIN contatos c ON c.id = d.contato_id
+         ORDER BY d.criada_em DESC'
+    )->fetchAll();
+}

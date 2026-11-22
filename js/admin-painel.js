@@ -1,123 +1,33 @@
 const btnMenu = document.getElementById("btn-menu");
 const menuLateral = document.getElementById("menu-lateral");
-const totalContatos = document.getElementById("total-contatos");
-const totalMensagens = document.getElementById("total-mensagens");
-const totalBloqueados = document.getElementById("total-bloqueados");
-const busca = document.getElementById("busca-contatos");
 const corpo = document.getElementById("tabela-corpo");
-const modalEditar = document.getElementById("modal-editar");
-const formEditar = document.getElementById("form-editar");
-const campoNome = document.getElementById("editar-nome");
-const campoTelefone = document.getElementById("editar-telefone");
-const campoBloqueado = document.getElementById("editar-bloqueado");
+const btnNovo = document.getElementById("btn-novo");
+const modalContato = document.getElementById("modal-contato");
+const formContato = document.getElementById("form-contato");
+const tituloModal = document.getElementById("titulo-modal");
+const campoAcao = document.getElementById("campo-acao");
+const campoId = document.getElementById("campo-id");
+const campoNome = document.getElementById("campo-nome");
+const campoTelefone = document.getElementById("campo-telefone");
+const campoRecado = document.getElementById("campo-recado");
+const campoBloqueado = document.getElementById("campo-bloqueado");
 const erroNome = document.getElementById("erro-nome");
 const erroTelefone = document.getElementById("erro-telefone");
-const editarCancelar = document.getElementById("editar-cancelar");
+const erroRecado = document.getElementById("erro-recado");
+const contatoCancelar = document.getElementById("contato-cancelar");
 const modalExcluir = document.getElementById("modal-excluir");
 const textoExcluir = document.getElementById("texto-excluir");
+const excluirId = document.getElementById("excluir-id");
 const excluirCancelar = document.getElementById("excluir-cancelar");
-const excluirConfirmar = document.getElementById("excluir-confirmar");
 const toast = document.getElementById("toast");
 
 const FORMATO_TELEFONE = /^\(\d{2}\) \d{5}-\d{4}$/;
 
-let conversas = [];
-let idEditando = null;
-let idExcluindo = null;
-let timerToast = null;
-
-function salvar() {
-  localStorage.setItem("conversas", JSON.stringify(conversas));
-}
-
-function mostrarToast(texto) {
-  toast.textContent = texto;
-  toast.classList.add("visivel");
-  clearTimeout(timerToast);
-  timerToast = setTimeout(function () {
+// Esconde o aviso vindo do PHP depois de alguns segundos
+if (toast.classList.contains("visivel")) {
+  setTimeout(function () {
     toast.classList.remove("visivel");
   }, 3000);
-}
-
-function buscarConversa(id) {
-  return conversas.find(function (c) {
-    return c.id === id;
-  });
-}
-
-function celula(texto) {
-  const td = document.createElement("td");
-  td.textContent = texto;
-  return td;
-}
-
-function botao(texto, classe, acao, id) {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "btn " + classe;
-  b.textContent = texto;
-  b.dataset.acao = acao;
-  b.dataset.id = id;
-  return b;
-}
-
-function contatos() {
-  return conversas.filter(function (c) {
-    return !c.grupo;
-  });
-}
-
-function renderizarResumo() {
-  const lista = contatos();
-  totalContatos.textContent = lista.length;
-  totalMensagens.textContent = lista.reduce(function (soma, c) {
-    return soma + c.mensagens.length;
-  }, 0);
-  totalBloqueados.textContent = lista.filter(function (c) {
-    return c.bloqueado;
-  }).length;
-}
-
-function renderizarTabela() {
-  const termo = busca.value.trim().toLowerCase();
-  const filtrados = contatos().filter(function (c) {
-    return c.nome.toLowerCase().includes(termo) || c.telefone.includes(termo);
-  });
-
-  corpo.innerHTML = "";
-
-  if (filtrados.length === 0) {
-    const tr = document.createElement("tr");
-    const td = celula("Nenhum contato encontrado");
-    td.colSpan = 5;
-    tr.appendChild(td);
-    corpo.appendChild(tr);
-    return;
-  }
-
-  filtrados.forEach(function (c) {
-    const tr = document.createElement("tr");
-
-    const situacao = document.createElement("td");
-    const span = document.createElement("span");
-    span.className = "situacao" + (c.bloqueado ? " bloqueado" : "");
-    span.textContent = c.bloqueado ? "Bloqueado" : "Ativo";
-    situacao.appendChild(span);
-
-    const acoes = document.createElement("td");
-    const div = document.createElement("div");
-    div.className = "acoes";
-    div.append(botao("Editar", "btn-secundario", "editar", c.id), botao("Excluir", "btn-perigo", "excluir", c.id));
-    acoes.appendChild(div);
-
-    tr.append(celula(c.nome), celula(c.telefone), celula(c.mensagens.length), situacao, acoes);
-    corpo.appendChild(tr);
-  });
-}
-
-function renderizar() {
-  renderizarResumo();
-  renderizarTabela();
 }
 
 function mostrarErro(campo, erro, texto) {
@@ -125,38 +35,35 @@ function mostrarErro(campo, erro, texto) {
   erro.textContent = texto;
 }
 
-function limparErro(campo, erro) {
-  campo.classList.remove("invalido");
-  erro.textContent = "";
+function limparErros() {
+  [[campoNome, erroNome], [campoTelefone, erroTelefone], [campoRecado, erroRecado]].forEach(function (par) {
+    par[0].classList.remove("invalido");
+    par[1].textContent = "";
+  });
 }
 
-function abrirEditar(id) {
-  const conversa = buscarConversa(id);
-  idEditando = id;
-  campoNome.value = conversa.nome;
-  campoTelefone.value = conversa.telefone;
-  campoBloqueado.checked = conversa.bloqueado;
-  limparErro(campoNome, erroNome);
-  limparErro(campoTelefone, erroTelefone);
-  modalEditar.hidden = false;
+function abrirContato(dados) {
+  limparErros();
+  campoAcao.value = dados ? "editar" : "criar";
+  campoId.value = dados ? dados.id : 0;
+  campoNome.value = dados ? dados.nome : "";
+  campoTelefone.value = dados ? dados.telefone : "";
+  campoRecado.value = dados ? dados.recado : "";
+  campoBloqueado.checked = dados ? dados.bloqueado === "1" : false;
+  tituloModal.textContent = dados ? "Editar contato" : "Novo contato";
+  modalContato.hidden = false;
   campoNome.focus();
 }
 
-function fecharEditar() {
-  modalEditar.hidden = true;
-  idEditando = null;
-}
-
-function abrirExcluir(id) {
-  const conversa = buscarConversa(id);
-  idExcluindo = id;
-  textoExcluir.textContent = "O contato " + conversa.nome + " e suas mensagens serão removidos.";
+function abrirExcluir(dados) {
+  excluirId.value = dados.id;
+  textoExcluir.textContent = "O contato " + dados.nome + " e as conversas dele serão removidos.";
   modalExcluir.hidden = false;
 }
 
-function fecharExcluir() {
+function fecharModais() {
+  modalContato.hidden = true;
   modalExcluir.hidden = true;
-  idExcluindo = null;
 }
 
 btnMenu.addEventListener("click", function () {
@@ -165,75 +72,42 @@ btnMenu.addEventListener("click", function () {
   btnMenu.setAttribute("aria-label", aberto ? "Fechar menu" : "Abrir menu");
 });
 
-busca.addEventListener("input", renderizarTabela);
-
-corpo.addEventListener("click", function (evento) {
-  const b = evento.target.closest("[data-acao]");
-  if (!b) return;
-  const id = Number(b.dataset.id);
-  if (b.dataset.acao === "editar") abrirEditar(id);
-  if (b.dataset.acao === "excluir") abrirExcluir(id);
+btnNovo.addEventListener("click", function () {
+  abrirContato(null);
 });
 
-formEditar.addEventListener("submit", function (evento) {
-  evento.preventDefault();
-  const nome = campoNome.value.trim();
-  const telefone = campoTelefone.value.trim();
+// Os dados de cada linha vêm do PHP nos atributos data-*
+corpo.addEventListener("click", function (evento) {
+  const botao = evento.target.closest("[data-acao]");
+  if (!botao) return;
+  if (botao.dataset.acao === "editar") abrirContato(botao.dataset);
+  if (botao.dataset.acao === "excluir") abrirExcluir(botao.dataset);
+});
+
+// Validação no navegador; o PHP valida de novo ao receber
+formContato.addEventListener("submit", function (evento) {
+  limparErros();
   let valido = true;
 
-  limparErro(campoNome, erroNome);
-  limparErro(campoTelefone, erroTelefone);
-
-  if (!nome) {
-    mostrarErro(campoNome, erroNome, "Informe o nome");
+  if (!campoNome.value.trim()) {
+    mostrarErro(campoNome, erroNome, "Informe o nome.");
+    valido = false;
+  }
+  if (!FORMATO_TELEFONE.test(campoTelefone.value.trim())) {
+    mostrarErro(campoTelefone, erroTelefone, "Use o formato (49) 99999-0001.");
+    valido = false;
+  }
+  if (campoRecado.value.trim().length > 150) {
+    mostrarErro(campoRecado, erroRecado, "O recado deve ter até 150 caracteres.");
     valido = false;
   }
 
-  if (!FORMATO_TELEFONE.test(telefone)) {
-    mostrarErro(campoTelefone, erroTelefone, "Use o formato (49) 99999-0001");
-    valido = false;
-  }
-
-  if (!valido) return;
-
-  const conversa = buscarConversa(idEditando);
-  conversa.nome = nome;
-  conversa.telefone = telefone;
-  conversa.bloqueado = campoBloqueado.checked;
-  salvar();
-  renderizar();
-  fecharEditar();
-  mostrarToast("Contato atualizado");
+  if (!valido) evento.preventDefault();
 });
 
-editarCancelar.addEventListener("click", fecharEditar);
+contatoCancelar.addEventListener("click", fecharModais);
+excluirCancelar.addEventListener("click", fecharModais);
 
-excluirCancelar.addEventListener("click", fecharExcluir);
-
-excluirConfirmar.addEventListener("click", function () {
-  conversas = conversas.filter(function (c) {
-    return c.id !== idExcluindo;
-  });
-  salvar();
-  renderizar();
-  fecharExcluir();
-  mostrarToast("Contato excluído");
+document.addEventListener("keydown", function (evento) {
+  if (evento.key === "Escape") fecharModais();
 });
-
-async function carregar() {
-  const salvas = localStorage.getItem("conversas");
-  if (salvas) {
-    conversas = JSON.parse(salvas);
-  } else {
-    try {
-      const resposta = await fetch("../dados/conversas.json");
-      conversas = await resposta.json();
-      salvar();
-    } catch (erro) {
-      mostrarToast("Não foi possível carregar os contatos");
-    }
-  }
-  renderizar();
-}
-
-carregar();
