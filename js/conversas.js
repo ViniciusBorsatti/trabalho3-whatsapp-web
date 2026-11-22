@@ -20,19 +20,41 @@ const modalCancelar = document.getElementById("modal-cancelar");
 const modalConfirmar = document.getElementById("modal-confirmar-btn");
 const toast = document.getElementById("toast");
 
-const LIMITE_FIXADAS = 3;
-const LIMITE_APAGAR = 15 * 60 * 1000;
 const TEXTO_APAGADA = "Esta mensagem foi apagada";
 
 let conversas = [];
+let mensagensAtuais = [];
 let idAtual = null;
 let filtroAtual = "tudo";
 let alvoMenu = null;
 let idParaApagar = null;
 let timerToast = null;
 
-function salvar() {
-  localStorage.setItem("conversas", JSON.stringify(conversas));
+// Todas as regras (fixar até 3, apagar até 15 min, contato bloqueado) são conferidas no PHP.
+// O JS só mostra o resultado e a mensagem de erro que a API devolve.
+async function api(url, dados) {
+  const opcoes = dados ? { method: "POST", body: new URLSearchParams(dados) } : {};
+  const resposta = await fetch(url, opcoes);
+  const json = await resposta.json();
+  if (resposta.status === 401) {
+    window.location.href = "login.php";
+  }
+  if (!resposta.ok) {
+    throw new Error(json.erro || "Algo deu errado. Tente de novo.");
+  }
+  return json;
+}
+
+async function carregarConversas() {
+  const json = await api("api/conversas.php");
+  conversas = json.conversas;
+  renderizarLista();
+}
+
+async function carregarMensagens() {
+  const json = await api("api/mensagens.php?conversa=" + idAtual);
+  mensagensAtuais = json.mensagens;
+  renderizarMensagens();
 }
 
 function mostrarToast(texto) {
@@ -42,11 +64,6 @@ function mostrarToast(texto) {
   timerToast = setTimeout(function () {
     toast.classList.remove("visivel");
   }, 3000);
-}
-
-function formatarHora(iso) {
-  const data = new Date(iso);
-  return String(data.getHours()).padStart(2, "0") + ":" + String(data.getMinutes()).padStart(2, "0");
 }
 
 function criar(tag, classe, texto) {
@@ -62,15 +79,6 @@ function buscarConversa(id) {
   });
 }
 
-function ultimaMensagem(conversa) {
-  return conversa.mensagens[conversa.mensagens.length - 1];
-}
-
-function tempoUltima(conversa) {
-  const ultima = ultimaMensagem(conversa);
-  return ultima ? new Date(ultima.hora).getTime() : 0;
-}
-
 function renderizarLista() {
   const termo = busca.value.trim().toLowerCase();
 
@@ -82,15 +90,10 @@ function renderizarLista() {
     return true;
   });
 
-  filtradas.sort(function (a, b) {
-    if (a.fixada !== b.fixada) return a.fixada ? -1 : 1;
-    return tempoUltima(b) - tempoUltima(a);
-  });
-
   lista.innerHTML = "";
 
   filtradas.forEach(function (c) {
-    const ultima = ultimaMensagem(c);
+    const ultima = c.ultima;
 
     const li = criar("li", "item-conversa");
     li.dataset.id = c.id;
@@ -102,7 +105,7 @@ function renderizarLista() {
     const info = criar("div", "item-info");
 
     const linha1 = criar("div", "item-linha");
-    const hora = criar("span", "item-hora", ultima ? formatarHora(ultima.hora) : "");
+    const hora = criar("span", "item-hora", ultima ? ultima.hora : "");
     if (c.naoLidas > 0) hora.classList.add("nao-lida");
     linha1.append(criar("span", "item-nome", c.nome), hora);
 
@@ -120,17 +123,16 @@ function renderizarLista() {
 }
 
 function renderizarMensagens() {
-  const conversa = buscarConversa(idAtual);
   mensagens.innerHTML = "";
 
-  conversa.mensagens.forEach(function (m) {
+  mensagensAtuais.forEach(function (m) {
     const div = criar("div", "mensagem " + (m.de === "eu" ? "enviada" : "recebida"));
     div.dataset.id = m.id;
 
     const texto = criar("p", "mensagem-texto", m.apagada ? TEXTO_APAGADA : m.texto);
     if (m.apagada) texto.style.fontStyle = "italic";
 
-    const info = criar("span", "mensagem-info", formatarHora(m.hora));
+    const info = criar("span", "mensagem-info", m.hora);
     if (m.de === "eu") info.appendChild(criar("i", "bi bi-check2-all lida"));
 
     div.append(texto, info);
@@ -140,17 +142,15 @@ function renderizarMensagens() {
   mensagens.scrollTop = mensagens.scrollHeight;
 }
 
-function abrirConversa(id) {
+async function abrirConversa(id) {
   const conversa = buscarConversa(id);
   idAtual = id;
-  conversa.naoLidas = 0;
-  salvar();
 
   boasVindas.hidden = true;
   chat.hidden = false;
   chatNome.textContent = conversa.nome;
     // aponta o link do cabeçalho para o perfil do contato aberto
-  document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.id;
+  document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.contatoId;
 
   if (conversa.bloqueado) {
     chatStatus.textContent = "Você bloqueou este contato";
@@ -161,9 +161,20 @@ function abrirConversa(id) {
   btnEnviar.disabled = conversa.bloqueado;
   campoMensagem.value = "";
 
-  renderizarMensagens();
-  renderizarLista();
   app.classList.add("chat-aberto");
+  mensagensAtuais = [];
+  renderizarLista();
+
+  try {
+    await carregarMensagens();
+    if (conversa.naoLidas > 0) {
+      await api("api/conversas.php", { acao: "ler", id: id });
+      conversa.naoLidas = 0;
+      renderizarLista();
+    }
+  } catch (erro) {
+    mostrarToast(erro.message);
+  }
 }
 
 function abrirMenu(evento, alvo) {
@@ -194,38 +205,16 @@ function fecharMenu() {
   menu.hidden = true;
 }
 
-function fixar(conversa) {
-  if (!conversa.fixada) {
-    const fixadas = conversas.filter(function (c) {
-      return c.fixada;
-    }).length;
-    if (fixadas >= LIMITE_FIXADAS) {
-      mostrarToast("Você só pode fixar até 3 conversas");
-      return;
-    }
+async function alterarConversa(acao, id) {
+  try {
+    await api("api/conversas.php", { acao: acao, id: id });
+    await carregarConversas();
+  } catch (erro) {
+    mostrarToast(erro.message);
   }
-  conversa.fixada = !conversa.fixada;
-  salvar();
-  renderizarLista();
-}
-
-function favoritar(conversa) {
-  conversa.favorita = !conversa.favorita;
-  salvar();
-  renderizarLista();
 }
 
 function pedirApagar(idMensagem) {
-  const conversa = buscarConversa(idAtual);
-  const mensagem = conversa.mensagens.find(function (m) {
-    return m.id === idMensagem;
-  });
-
-  if (Date.now() - new Date(mensagem.hora).getTime() > LIMITE_APAGAR) {
-    mostrarToast("Só é possível apagar para todos mensagens com até 15 minutos");
-    return;
-  }
-
   idParaApagar = idMensagem;
   modal.hidden = false;
 }
@@ -248,11 +237,10 @@ lista.addEventListener("contextmenu", function (evento) {
 mensagens.addEventListener("contextmenu", function (evento) {
   const elemento = evento.target.closest(".mensagem.enviada");
   if (!elemento) return;
-  const conversa = buscarConversa(idAtual);
-  const mensagem = conversa.mensagens.find(function (m) {
+  const mensagem = mensagensAtuais.find(function (m) {
     return m.id === Number(elemento.dataset.id);
   });
-  if (mensagem.apagada) return;
+  if (!mensagem || mensagem.apagada) return;
   abrirMenu(evento, { tipo: "mensagem", id: mensagem.id });
 });
 
@@ -273,23 +261,19 @@ btnVoltar.addEventListener("click", function () {
   app.classList.remove("chat-aberto");
 });
 
-formMensagem.addEventListener("submit", function (evento) {
+formMensagem.addEventListener("submit", async function (evento) {
   evento.preventDefault();
-  const conversa = buscarConversa(idAtual);
   const texto = campoMensagem.value.trim();
-  if (!texto || !conversa || conversa.bloqueado) return;
+  if (!texto || !idAtual) return;
 
-  conversa.mensagens.push({
-    id: Date.now(),
-    de: "eu",
-    texto: texto,
-    hora: new Date().toISOString()
-  });
-
-  campoMensagem.value = "";
-  salvar();
-  renderizarMensagens();
-  renderizarLista();
+  try {
+    await api("api/mensagens.php", { acao: "enviar", conversa: idAtual, texto: texto });
+    campoMensagem.value = "";
+    await carregarMensagens();
+    await carregarConversas();
+  } catch (erro) {
+    mostrarToast(erro.message);
+  }
 });
 
 menu.addEventListener("click", function (evento) {
@@ -297,8 +281,8 @@ menu.addEventListener("click", function (evento) {
   if (!botao || !alvoMenu) return;
   fecharMenu();
 
-  if (botao.dataset.acao === "fixar") fixar(buscarConversa(alvoMenu.id));
-  if (botao.dataset.acao === "favoritar") favoritar(buscarConversa(alvoMenu.id));
+  if (botao.dataset.acao === "fixar") alterarConversa("fixar", alvoMenu.id);
+  if (botao.dataset.acao === "favoritar") alterarConversa("favoritar", alvoMenu.id);
   if (botao.dataset.acao === "apagar") pedirApagar(alvoMenu.id);
 });
 
@@ -312,32 +296,18 @@ document.addEventListener("keydown", function (evento) {
 
 modalCancelar.addEventListener("click", fecharModal);
 
-modalConfirmar.addEventListener("click", function () {
-  const conversa = buscarConversa(idAtual);
-  const mensagem = conversa.mensagens.find(function (m) {
-    return m.id === idParaApagar;
-  });
-  if (mensagem) mensagem.apagada = true;
-  salvar();
+modalConfirmar.addEventListener("click", async function () {
+  const id = idParaApagar;
   fecharModal();
-  renderizarMensagens();
-  renderizarLista();
+  try {
+    await api("api/mensagens.php", { acao: "apagar", id: id });
+    await carregarMensagens();
+    await carregarConversas();
+  } catch (erro) {
+    mostrarToast(erro.message);
+  }
 });
 
-async function carregar() {
-  const salvas = localStorage.getItem("conversas");
-  if (salvas) {
-    conversas = JSON.parse(salvas);
-  } else {
-    try {
-      const resposta = await fetch("dados/conversas.json");
-      conversas = await resposta.json();
-      salvar();
-    } catch (erro) {
-      mostrarToast("Não foi possível carregar as conversas");
-    }
-  }
-  renderizarLista();
-}
-
-carregar();
+carregarConversas().catch(function (erro) {
+  mostrarToast(erro.message);
+});

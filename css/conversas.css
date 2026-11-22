@@ -1,13 +1,17 @@
 body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
 .app {
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 64px minmax(340px, 30%) 1fr;
-  grid-template-rows: 1fr auto;
-  height: 100vh;
-  height: 100dvh;
+  grid-template-rows: 1fr;
 }
 
 .barra-icones {
@@ -358,9 +362,8 @@ body {
   color: var(--texto-2);
 }
 
-.app > .rodape-aviso {
-  grid-column: 1 / -1;
-  grid-row: 2;
+.app + .rodape-aviso,
+body > .rodape-aviso {
   padding: 6px 16px;
   background: var(--painel);
   border-top: 1px solid var(--divisoria);
@@ -432,7 +435,7 @@ body {
 @media (max-width: 767px) {
   .app {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto auto;
+    grid-template-rows: 1fr auto;
   }
 
   .painel-lista {
@@ -461,9 +464,6 @@ body {
     display: contents;
   }
 
-  .app > .rodape-aviso {
-    grid-row: 3;
-  }
 
   .app.chat-aberto .painel-lista,
   .app.chat-aberto .barra-icones {

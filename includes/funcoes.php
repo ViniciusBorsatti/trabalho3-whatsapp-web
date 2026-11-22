@@ -231,3 +231,117 @@ function listarDenuncias(PDO $pdo): array
          ORDER BY d.criada_em DESC'
     )->fetchAll();
 }
+
+const LIMITE_FIXADAS = 3;
+const LIMITE_APAGAR_SEGUNDOS = 15 * 60;
+
+function responderJson(array $dados, int $status = 200): void
+{
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($dados, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function exigirUsuarioApi(): void
+{
+    if (!usuarioLogado()) {
+        responderJson(['erro' => 'Faça login para continuar.'], 401);
+    }
+}
+
+function listarConversas(PDO $pdo): array
+{
+    return $pdo->query(
+        'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, cv.favorita, cv.nao_lidas,
+                c.telefone, c.bloqueado,
+                m.texto AS ultima_texto, m.apagada AS ultima_apagada, m.enviada_em AS ultima_em
+         FROM conversas cv
+         JOIN contatos c ON c.id = cv.contato_id
+         LEFT JOIN mensagens m ON m.id = (SELECT MAX(id) FROM mensagens WHERE conversa_id = cv.id)
+         ORDER BY cv.fixada DESC, m.enviada_em DESC'
+    )->fetchAll();
+}
+
+function buscarConversaPorId(PDO $pdo, int $id): ?array
+{
+    $stmt = $pdo->prepare(
+        'SELECT cv.id, cv.fixada, cv.favorita, c.bloqueado
+         FROM conversas cv JOIN contatos c ON c.id = cv.contato_id
+         WHERE cv.id = ?'
+    );
+    $stmt->execute([$id]);
+    return $stmt->fetch() ?: null;
+}
+
+function alternarFixada(PDO $pdo, array $conversa): void
+{
+    if (!$conversa['fixada']) {
+        $fixadas = (int)$pdo->query('SELECT COUNT(*) FROM conversas WHERE fixada = 1')->fetchColumn();
+        if ($fixadas >= LIMITE_FIXADAS) {
+            throw new DomainException('Você só pode fixar até 3 conversas.');
+        }
+    }
+    $stmt = $pdo->prepare('UPDATE conversas SET fixada = ? WHERE id = ?');
+    $stmt->execute([(int)!$conversa['fixada'], $conversa['id']]);
+}
+
+function alternarFavorita(PDO $pdo, array $conversa): void
+{
+    $stmt = $pdo->prepare('UPDATE conversas SET favorita = ? WHERE id = ?');
+    $stmt->execute([(int)!$conversa['favorita'], $conversa['id']]);
+}
+
+function marcarComoLida(PDO $pdo, int $conversaId): void
+{
+    $stmt = $pdo->prepare('UPDATE conversas SET nao_lidas = 0 WHERE id = ?');
+    $stmt->execute([$conversaId]);
+}
+
+function listarMensagens(PDO $pdo, int $conversaId): array
+{
+    $stmt = $pdo->prepare('SELECT id, de, texto, apagada, enviada_em FROM mensagens WHERE conversa_id = ? ORDER BY enviada_em, id');
+    $stmt->execute([$conversaId]);
+    return $stmt->fetchAll();
+}
+
+function enviarMensagem(PDO $pdo, array $conversa, string $texto): int
+{
+    if ($conversa['bloqueado']) {
+        throw new DomainException('Você bloqueou este contato. Desbloqueie para enviar mensagens.');
+    }
+    $stmt = $pdo->prepare("INSERT INTO mensagens (conversa_id, de, texto) VALUES (?, 'eu', ?)");
+    $stmt->execute([$conversa['id'], $texto]);
+    return (int)$pdo->lastInsertId();
+}
+
+function apagarParaTodos(PDO $pdo, int $mensagemId): void
+{
+    $stmt = $pdo->prepare('SELECT de, apagada, TIMESTAMPDIFF(SECOND, enviada_em, NOW()) AS segundos FROM mensagens WHERE id = ?');
+    $stmt->execute([$mensagemId]);
+    $mensagem = $stmt->fetch();
+
+    if (!$mensagem || $mensagem['de'] !== 'eu') {
+        throw new DomainException('Só é possível apagar mensagens enviadas por você.');
+    }
+    if ($mensagem['apagada']) {
+        throw new DomainException('Esta mensagem já foi apagada.');
+    }
+    if ((int)$mensagem['segundos'] > LIMITE_APAGAR_SEGUNDOS) {
+        throw new DomainException('Só é possível apagar para todos mensagens com até 15 minutos.');
+    }
+
+    $stmt = $pdo->prepare('UPDATE mensagens SET apagada = 1 WHERE id = ?');
+    $stmt->execute([$mensagemId]);
+}
+
+function formatarMensagem(array $m): array
+{
+    return [
+        'id'      => (int)$m['id'],
+        'de'      => $m['de'],
+        'texto'   => $m['apagada'] ? '' : $m['texto'],
+        'apagada' => (bool)$m['apagada'],
+        'hora'    => date('H:i', strtotime($m['enviada_em'])),
+    ];
+}

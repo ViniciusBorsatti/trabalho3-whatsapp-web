@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS conversas (
   grupo TINYINT(1) NOT NULL DEFAULT 0,
   fixada TINYINT(1) NOT NULL DEFAULT 0,
   favorita TINYINT(1) NOT NULL DEFAULT 0,
+  nao_lidas INT NOT NULL DEFAULT 0,
   FOREIGN KEY (contato_id) REFERENCES contatos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -96,19 +97,19 @@ INSERT INTO contatos (id, nome, recado, telefone, grupo, favorito, bloqueado) VA
 (19, 'Tatiane Ribeiro', 'Disponível', '(49) 99999-0019', 0, 0, 0);
 
 
-INSERT INTO conversas (id, contato_id, nome, grupo, fixada, favorita) VALUES
-(1, 1, 'Trabalho DWI – Grupo 4', 1, 1, 1),
-(2, 2, 'Mãe', 0, 1, 1),
-(3, 3, 'Lucas Ferreira', 0, 0, 0),
-(4, 4, 'Ana Beatriz', 0, 0, 1),
-(5, 5, 'Família Silva', 1, 0, 0),
-(6, 6, 'Carlos Mendes', 0, 0, 0),
-(7, 7, 'Juliana Costa', 0, 0, 0),
-(8, 8, 'Futebol de Quinta', 1, 0, 0),
-(9, 9, 'Prof. Ricardo', 0, 0, 0),
-(10, 10, 'Mariana Rocha', 0, 0, 0),
-(11, 11, 'Turma ADS 2026', 1, 0, 0),
-(12, 12, 'Pedro Almeida', 0, 0, 0);
+INSERT INTO conversas (id, contato_id, nome, grupo, fixada, favorita, nao_lidas) VALUES
+(1, 1, 'Trabalho DWI – Grupo 4', 1, 1, 1, 3),
+(2, 2, 'Mãe', 0, 1, 1, 0),
+(3, 3, 'Lucas Ferreira', 0, 0, 0, 2),
+(4, 4, 'Ana Beatriz', 0, 0, 1, 0),
+(5, 5, 'Família Silva', 1, 0, 0, 7),
+(6, 6, 'Carlos Mendes', 0, 0, 0, 0),
+(7, 7, 'Juliana Costa', 0, 0, 0, 1),
+(8, 8, 'Futebol de Quinta', 1, 0, 0, 0),
+(9, 9, 'Prof. Ricardo', 0, 0, 0, 0),
+(10, 10, 'Mariana Rocha', 0, 0, 0, 0),
+(11, 11, 'Turma ADS 2026', 1, 0, 0, 12),
+(12, 12, 'Pedro Almeida', 0, 0, 0, 0);
 
 INSERT INTO mensagens (conversa_id, de, texto, enviada_em) VALUES
 (1, 'contato', 'Pessoal, quem vai fazer a tela de login?', '2026-11-14 19:10:00'),

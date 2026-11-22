@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/funcoes.php';
+require_once __DIR__ . '/includes/verifica-usuario.php';
 
 $tituloPagina = 'Conversas – WhatsApp Web';
 $cssPagina    = 'css/conversas.css';
@@ -85,7 +86,6 @@ require_once __DIR__ . '/includes/cabecalho.php';
       </section>
     </main>
 
-    <?php require_once __DIR__ . '/includes/rodape.php'; ?>
   </div>
 
   <div class="menu-contexto" id="menu-contexto" role="menu" hidden>
@@ -96,8 +96,8 @@ require_once __DIR__ . '/includes/cabecalho.php';
 
   <div class="modal" id="modal-confirmar" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" hidden>
     <div class="modal-conteudo">
-      <h2 class="modal-titulo" id="modal-titulo">Apagar conversa?</h2>
-      <p class="modal-texto" id="modal-texto">Esta conversa será apagada para todos.</p>
+      <h2 class="modal-titulo" id="modal-titulo">Apagar mensagem?</h2>
+      <p class="modal-texto" id="modal-texto">Esta mensagem será apagada para todos na conversa.</p>
       <div class="modal-acoes">
         <button type="button" class="btn btn-secundario" id="modal-cancelar">Cancelar</button>
         <button type="button" class="btn btn-perigo" id="modal-confirmar-btn">Apagar</button>
@@ -106,5 +106,4 @@ require_once __DIR__ . '/includes/cabecalho.php';
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/rodape.php'; ?>
