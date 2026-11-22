@@ -301,7 +301,7 @@ body {
   }
 
   .contatos-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     border: none;
   }
 
@@ -334,6 +334,7 @@ body {
 
 .busca-box input {
   width: 100%;
+  min-width: 0;
   border: none;
   background: transparent;
   color: var(--texto);

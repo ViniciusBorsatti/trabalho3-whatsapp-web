@@ -8,115 +8,101 @@ Trabalho da disciplina Desenvolvimento Web I do curso de Ciência da Computaçã
 - Vinicius Borsatti
 - Nicolas Muller
 
-## Site publicado
-
-https://viniciusborsatti.github.io/trabalho3-whatsapp-web/
-
 ## Tecnologias
 
-- HTML5
-- CSS3
-- JavaScript
+- HTML5, CSS3 e JavaScript
+- PHP 8 (sem framework)
+- MySQL/MariaDB com PDO e prepared statements
 - Bootstrap Icons
+
+## Usuários de teste
+
+| Área | Login | Senha |
+| --- | --- | --- |
+| Painel do administrador (`admin/login.php`) | admin@teste.com | admin123 |
+| Usuário do site (`login.php`) | (49) 99999-0000 | usuario123 |
+
+## Como executar (XAMPP)
+
+1. Instale o [XAMPP](https://www.apachefriends.org/) e inicie o **Apache** e o **MySQL** no painel de controle.
+2. Coloque a pasta do projeto em `C:\xampp\htdocs\trabalho3-whatsapp-web`.
+3. Abra `http://localhost/phpmyadmin`, vá em **Importar**, escolha o arquivo `banco.sql` e clique em **Executar**. O script cria o banco `whatsapp_clone` com as tabelas e os dados de teste.
+4. Acesse `http://localhost/trabalho3-whatsapp-web/`.
+
+A conexão usa o usuário `root` sem senha, que é o padrão do XAMPP. Se o seu MySQL tiver outra senha, altere em `includes/conexao.php`.
+
+Para importar o banco de novo, apague antes o banco `whatsapp_clone` no phpMyAdmin.
+
+## Como testar o QR code
+
+1. No computador, abra `index.php`. A página gera um QR code que vale 60 segundos.
+2. No celular, entre na conta (`login.php`) e leia o QR code, ou, no mesmo computador, clique em **Abrir link do QR** para abrir a tela do celular em outra aba.
+3. Na tela do celular, toque em **Conectar**. O computador entra sozinho nas Conversas.
+
+Se o celular estiver em outro aparelho, ele precisa estar na mesma rede e acessar o projeto pelo IP do computador (por exemplo `http://192.168.0.10/trabalho3-whatsapp-web/`), porque `localhost` só funciona no próprio computador.
 
 ## Páginas
 
 | Página | Arquivo | Área | Responsável |
 | --- | --- | --- | --- |
-| Entrada | index.html | Pública | Jadson |
-| Cadastro | cadastro.html | Pública | Nicolas |
-| Login | login.html | Pública | Nicolas |
-| Conectar aparelho | conectar.html | Pública | Nicolas |
-| Conversas | conversas.html | Pública | Vinicius |
-| Perfil do contato | perfil.html | Pública | Jadson |
-| Nova conversa | nova-conversa.html | Pública | Jadson |
-| Configurações | configuracoes.html | Pública | Jadson |
-| Login do administrador | admin/login.html | Restrita | Nicolas |
-| Painel do administrador | admin/painel.html | Restrita | Vinicius |
+| Entrada (QR code) | index.php | Pública | Jadson / Vinicius |
+| Cadastro | cadastro.php | Pública | Nicolas |
+| Login | login.php | Pública | Nicolas |
+| Conectar computador | conectar.php | Usuário logado | Nicolas / Vinicius |
+| Conversas | conversas.php | Usuário logado | Vinicius |
+| Perfil do contato | perfil.php | Pública | Jadson |
+| Nova conversa (contatos) | nova-conversa.php | Pública | Jadson |
+| Configurações | configuracoes.php | Usuário logado | Jadson |
+| Login do administrador | admin/login.php | Restrita | Nicolas |
+| Painel do administrador | admin/painel.php | Restrita | Vinicius |
 
 ## Funcionalidades
 
-- Tema claro e escuro salvo no navegador
-- Busca e filtros de conversas
-- Envio de mensagens
-- Layout responsivo
-- RN01: no máximo 3 conversas fixadas
-- RN02: apagar para todos só até 15 minutos depois do envio
-- RN03: contato bloqueado não recebe mensagens
-- RN04: QR code válido por 60 segundos e de uso único
+- Cadastro e login de usuário com senha criptografada (`password_hash` e `password_verify`) e sessão
+- Login do administrador com sessão; o painel redireciona para o login quem não estiver logado
+- Painel com CRUD de contatos (criar, listar com busca, editar e excluir) e lista das denúncias
+- Lista pública de contatos com busca e cadastro de novo contato
+- Perfil do contato com favoritar, bloquear e denúncia gravada no banco
+- Conversas carregadas do banco com `fetch` (arquivos da pasta `api/` respondem em JSON)
+- Validação no PHP em todos os formulários, mantendo os dados preenchidos quando há erro
+- Tema claro e escuro, layout responsivo
+
+## Regras de negócio (validadas no PHP)
+
+- **RN01:** no máximo 3 conversas fixadas
+- **RN02:** "Apagar para todos" só para mensagens próprias com até 15 minutos
+- **RN03:** contato bloqueado não recebe mensagens
+- **RN04:** o QR code de conexão vale 60 segundos e só pode ser usado uma vez
 
 ## Estrutura de pastas
 
 ```
 trabalho3-whatsapp-web/
-├── index.html
-├── cadastro.html
-├── login.html
-├── conectar.html
-├── conversas.html
-├── perfil.html
-├── nova-conversa.html
-├── configuracoes.html
+├── index.php, cadastro.php, login.php, logout.php
+├── conectar.php, conversas.php, perfil.php
+├── nova-conversa.php, configuracoes.php
 ├── admin/
-│   ├── login.html
-│   └── painel.html
+│   ├── login.php
+│   ├── logout.php
+│   └── painel.php
+├── api/
+│   ├── conversas.php     Lista, fixa, favorita e marca conversas como lidas
+│   ├── mensagens.php     Lista, envia e apaga mensagens
+│   └── qr.php            Gera e consulta o QR code
+├── includes/
+│   ├── conexao.php       Conexão PDO
+│   ├── funcoes.php       Funções de banco e regras de negócio
+│   ├── cabecalho.php
+│   ├── rodape.php
+│   ├── verifica-usuario.php
+│   └── verifica-admin.php
 ├── css/
-│   ├── style.css
-│   ├── entrada.css
-│   ├── cadastro.css
-│   ├── login.css
-│   ├── conectar.css
-│   ├── conversas.css
-│   ├── perfil.css
-│   ├── nova-conversa.css
-│   ├── configuracoes.css
-│   ├── admin-login.css
-│   └── admin-painel.css
 ├── js/
-│   ├── tema.js
-│   ├── entrada.js
-│   ├── cadastro.js
-│   ├── login.js
-│   ├── conectar.js
-│   ├── conversas.js
-│   ├── perfil.js
-│   ├── nova-conversa.js
-│   ├── configuracoes.js
-│   ├── admin-login.js
-│   └── admin-painel.js
-├── dados/
-│   └── conversas.json
 ├── img/
-│   └── prints/
+├── banco.sql             Criação do banco e dados de teste
 ├── PROMPTS.md
 └── README.md
 ```
-
-## Como executar localmente
-
-1. Abra a pasta do projeto no VS Code.
-2. Instale a extensão Live Server.
-3. Clique com o botão direito em `index.html` e escolha "Open with Live Server".
-
-O projeto precisa ser aberto por um servidor local porque as páginas carregam os arquivos JSON com `fetch`, e o navegador bloqueia essa leitura quando o HTML é aberto direto pelo endereço `file://`.
-
-## Capturas de tela
-
-### Conversas
-
-![Tela de conversas](img/prints/conversas.png)
-
-### Conversas no tema escuro
-
-![Tela de conversas no tema escuro](img/prints/conversas-escuro.png)
-
-### Painel do administrador
-
-![Painel do administrador](img/prints/painel.png)
-
-## Próximos passos
-
-A Parte 3 do trabalho vai adicionar back-end com PHP e MySQL.
 
 ## Prompts utilizados
 
