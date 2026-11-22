@@ -43,3 +43,15 @@ Prompt 6 - Converta a questão dos números para serem preenchidos automáticos 
 --------------------------------------------------------------------------------------------
 
 Prompt 8 - Ajude me a colocar comentários nos trechos desses códigos que te enviei ( login, cadastro, html e js)
+
+--------------------------------------------------------------------------------------------
+
+Prompt 9  - Me ajudo a criar um readme completo para erre projeto
+
+--------------------------------------------------------------------------------------------
+
+Prompt 10 - Revise esse projeto, se eles esta um boas praticas e se exite alguma possivel falha de segurança
+
+
+
+
