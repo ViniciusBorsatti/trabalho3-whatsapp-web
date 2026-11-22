@@ -27,7 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'nome'     => $usuario['nome'],
             'telefone' => $usuario['telefone'],
         ];
-        redirecionar('conversas.php');
+        $destino = $_SESSION['voltar_para'] ?? 'conversas.php';
+        unset($_SESSION['voltar_para']);
+        redirecionar($destino);
     }
 
     // Mensagem genérica: não revela se foi o telefone ou a senha que errou

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS qr_codes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   token VARCHAR(64) NOT NULL UNIQUE,
   usuario_id INT NULL,
+  navegador VARCHAR(100),
   status ENUM('aguardando', 'confirmado', 'usado') NOT NULL DEFAULT 'aguardando',
   criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL

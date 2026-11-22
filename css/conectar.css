@@ -5,7 +5,7 @@
 .conectar-pagina {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 40px);
   background-color: var(--painel);
   color: var(--texto);
 }
@@ -15,7 +15,6 @@
   flex-direction: column;
   width: 100%;
   max-width: 420px;
-  min-height: 100vh;
   background-color: var(--fundo);
   box-shadow: 0 0 12px rgba(11, 20, 26, 0.12);
 }
@@ -135,7 +134,12 @@
   flex: 1;
 }
 
-.conectar-celular > .rodape-aviso {
+.conectar-sucesso {
+  font-size: 64px;
+  color: var(--verde);
+}
+
+body > .rodape-aviso {
   border-top: 1px solid var(--divisoria);
 }
 

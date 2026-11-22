@@ -297,3 +297,8 @@ body {
     display: flex;
   }
 }
+
+.qr-botoes .btn.desativado {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

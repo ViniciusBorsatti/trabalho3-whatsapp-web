@@ -46,8 +46,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
               <a href="cadastro.php">Crie pelo celular.</a>
             </p>
             <p class="texto-apoio">
-              Acesse este mesmo endereço no navegador do celular ou
-              <a href="conectar.php">simule a tela do celular ao ler o QR</a>.
+              Sem celular por perto? Entre na sua conta em outra aba e abra o link do QR code para simular a leitura.
             </p>
           </div>
         </article>
@@ -68,15 +67,15 @@ require_once __DIR__ . '/includes/cabecalho.php';
           </div>
 
           <p class="qr-status" id="qr-contador" aria-live="polite">
-            O QR code expira em <strong>60 s</strong>
+            Gerando QR code...
           </p>
           <p class="erro-campo" id="qr-erro" role="alert"></p>
 
           <div class="qr-botoes">
-            <button type="button" class="btn btn-primario" id="btn-simular-leitura">
+            <a class="btn btn-primario" id="qr-link" href="#" target="_blank" rel="noopener">
               <i class="bi bi-qr-code-scan" aria-hidden="true"></i>
-              Simular leitura
-            </button>
+              Abrir link do QR
+            </a>
             <button type="button" class="btn btn-secundario" id="btn-novo-qr">
               <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
               Gerar novo QR code
@@ -84,7 +83,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
           </div>
 
           <p class="qr-estado-conexao" id="qr-estado-conexao">
-            Estado da espera: Aguardando o celular...
+            Aguardando o celular...
           </p>
         </aside>
       </div>

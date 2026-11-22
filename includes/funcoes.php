@@ -345,3 +345,95 @@ function formatarMensagem(array $m): array
         'hora'    => date('H:i', strtotime($m['enviada_em'])),
     ];
 }
+
+const VALIDADE_QR_SEGUNDOS = 60;
+
+function descreverNavegador(string $agente): string
+{
+    $navegador = 'Navegador';
+    foreach (['Edg' => 'Microsoft Edge', 'OPR' => 'Opera', 'Firefox' => 'Firefox', 'Chrome' => 'Google Chrome', 'Safari' => 'Safari'] as $marca => $nome) {
+        if (strpos($agente, $marca) !== false) {
+            $navegador = $nome;
+            break;
+        }
+    }
+    $sistema = 'computador';
+    foreach (['Windows' => 'Windows', 'Mac OS' => 'macOS', 'Linux' => 'Linux'] as $marca => $nome) {
+        if (strpos($agente, $marca) !== false) {
+            $sistema = $nome;
+            break;
+        }
+    }
+    return $navegador . ' no ' . $sistema;
+}
+
+function linkConectar(string $token): string
+{
+    $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $pasta = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']))), '/');
+    return $protocolo . '://' . $_SERVER['HTTP_HOST'] . $pasta . '/conectar.php?token=' . urlencode($token);
+}
+
+function gerarQr(PDO $pdo): string
+{
+    $token = bin2hex(random_bytes(16));
+    $stmt = $pdo->prepare('INSERT INTO qr_codes (token, navegador) VALUES (?, ?)');
+    $stmt->execute([$token, descreverNavegador($_SERVER['HTTP_USER_AGENT'] ?? '')]);
+    return $token;
+}
+
+function buscarQr(PDO $pdo, string $token): ?array
+{
+    $stmt = $pdo->prepare(
+        'SELECT id, token, usuario_id, navegador, status, criado_em,
+                TIMESTAMPDIFF(SECOND, criado_em, NOW()) AS idade
+         FROM qr_codes WHERE token = ?'
+    );
+    $stmt->execute([$token]);
+    $qr = $stmt->fetch();
+    if (!$qr) {
+        return null;
+    }
+    $qr['restante'] = max(0, VALIDADE_QR_SEGUNDOS - (int)$qr['idade']);
+    return $qr;
+}
+
+function confirmarQr(PDO $pdo, string $token, int $usuarioId): void
+{
+    $qr = buscarQr($pdo, $token);
+    if (!$qr) {
+        throw new DomainException('QR code inválido. Gere um novo no computador.');
+    }
+    if ($qr['status'] !== 'aguardando') {
+        throw new DomainException('Este QR code já foi usado. Gere um novo no computador.');
+    }
+    if ($qr['restante'] <= 0) {
+        throw new DomainException('QR code expirado. Gere um novo no computador.');
+    }
+    $stmt = $pdo->prepare("UPDATE qr_codes SET status = 'confirmado', usuario_id = ? WHERE id = ? AND status = 'aguardando'");
+    $stmt->execute([$usuarioId, $qr['id']]);
+}
+
+function entrarPeloQr(PDO $pdo, array $qr): bool
+{
+    $stmt = $pdo->prepare("UPDATE qr_codes SET status = 'usado' WHERE id = ? AND status = 'confirmado'");
+    $stmt->execute([$qr['id']]);
+    if ($stmt->rowCount() !== 1) {
+        return false;
+    }
+
+    $stmt = $pdo->prepare('SELECT id, nome, telefone FROM usuarios WHERE id = ?');
+    $stmt->execute([$qr['usuario_id']]);
+    $usuario = $stmt->fetch();
+    if (!$usuario) {
+        return false;
+    }
+
+    session_regenerate_id(true);
+    $_SESSION['usuario'] = [
+        'id'       => $usuario['id'],
+        'nome'     => $usuario['nome'],
+        'telefone' => $usuario['telefone'],
+    ];
+    return true;
+}
