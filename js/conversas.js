@@ -306,6 +306,11 @@ modalConfirmar.addEventListener("click", async function () {
   }
 });
 
-carregarConversas().catch(function (erro) {
-  mostrarToast(erro.message);
-});
+carregarConversas()
+  .then(function () {
+    const abrir = Number(app.dataset.abrir);
+    if (abrir && buscarConversa(abrir)) abrirConversa(abrir);
+  })
+  .catch(function (erro) {
+    mostrarToast(erro.message);
+  });

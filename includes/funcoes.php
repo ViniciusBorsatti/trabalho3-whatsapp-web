@@ -453,3 +453,22 @@ function entrarPeloQr(PDO $pdo, array $qr): bool
     ];
     return true;
 }
+
+function abrirConversaComContato(PDO $pdo, int $contatoId): ?int
+{
+    $stmt = $pdo->prepare('SELECT id FROM conversas WHERE contato_id = ? LIMIT 1');
+    $stmt->execute([$contatoId]);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        return (int)$id;
+    }
+
+    $contato = buscarContatoPorId($pdo, $contatoId);
+    if (!$contato) {
+        return null;
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO conversas (contato_id, nome, grupo) VALUES (?, ?, ?)');
+    $stmt->execute([$contatoId, $contato['nome'], (int)$contato['grupo']]);
+    return (int)$pdo->lastInsertId();
+}

@@ -1,6 +1,13 @@
 <?php
+require_once __DIR__ . '/includes/conexao.php';
 require_once __DIR__ . '/includes/funcoes.php';
 require_once __DIR__ . '/includes/verifica-usuario.php';
+
+$abrirConversa = 0;
+$contatoId = filter_input(INPUT_GET, 'contato', FILTER_VALIDATE_INT);
+if ($contatoId) {
+    $abrirConversa = abrirConversaComContato($pdo, $contatoId) ?? 0;
+}
 
 $tituloPagina = 'Conversas – WhatsApp Web';
 $cssPagina    = 'css/conversas.css';
@@ -11,7 +18,7 @@ $tipoRodape   = 'aviso';
 
 require_once __DIR__ . '/includes/cabecalho.php';
 ?>
-  <div class="app" id="app">
+  <div class="app" id="app" data-abrir="<?= (int)$abrirConversa ?>">
     <nav class="barra-icones" aria-label="Menu principal">
       <div class="barra-icones-grupo">
         <a href="conversas.php" class="btn-icone" aria-label="Conversas" aria-current="page"><i class="bi bi-chat-left-text-fill"></i></a>
