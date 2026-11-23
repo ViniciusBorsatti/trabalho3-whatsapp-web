@@ -27,7 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $qr = $token !== '' ? buscarQr($pdo, $token) : null;
 
 if (!$conectado && $erro === '') {
-    if (!$qr) {
+    if ($token === '') {
+        $erro = 'Aponte a câmera do celular para o QR code que aparece no computador.';
+    } elseif (!$qr) {
         $erro = 'QR code inválido. Gere um novo no computador.';
     } elseif ($qr['status'] !== 'aguardando') {
         $erro = 'Este QR code já foi usado. Gere um novo no computador.';

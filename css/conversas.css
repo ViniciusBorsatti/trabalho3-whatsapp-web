@@ -275,6 +275,7 @@ body {
 
 .chat-acoes {
   display: flex;
+  align-items: center;
   gap: 4px;
 }
 
@@ -383,7 +384,8 @@ body > .rodape-aviso {
   display: none;
 }
 
-.menu-contexto button {
+.menu-contexto button,
+.menu-contexto a {
   display: block;
   width: 100%;
   padding: 13px 24px;
@@ -392,7 +394,13 @@ body > .rodape-aviso {
   color: var(--texto);
 }
 
-.menu-contexto button:hover {
+.menu-contexto a {
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.menu-contexto button:hover,
+.menu-contexto a:hover {
   background: var(--painel);
 }
 
@@ -501,5 +509,73 @@ body > .rodape-aviso {
 
   .modal-acoes .btn {
     width: auto;
+  }
+}
+
+.chat-rodape {
+  position: relative;
+}
+
+.painel-emoji {
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  gap: 4px;
+  padding: 10px;
+  background: var(--fundo);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(11, 20, 26, 0.2);
+}
+
+.painel-emoji[hidden] {
+  display: none;
+}
+
+.painel-emoji button {
+  font-size: 22px;
+  line-height: 40px;
+  border-radius: 6px;
+}
+
+.painel-emoji button:hover {
+  background: var(--painel);
+}
+
+.busca-mensagens {
+  width: 220px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+}
+
+.busca-mensagens[hidden] {
+  display: none;
+}
+
+.mensagem.oculta {
+  display: none;
+}
+
+.mensagem mark {
+  background: #FFE58F;
+  color: inherit;
+  border-radius: 2px;
+}
+
+@media (max-width: 767px) {
+  .busca-mensagens {
+    width: 130px;
+  }
+
+  .painel-emoji {
+    left: 8px;
+    grid-template-columns: repeat(6, 40px);
   }
 }

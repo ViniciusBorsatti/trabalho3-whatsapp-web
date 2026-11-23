@@ -19,6 +19,18 @@ const modal = document.getElementById("modal-confirmar");
 const modalCancelar = document.getElementById("modal-cancelar");
 const modalConfirmar = document.getElementById("modal-confirmar-btn");
 const toast = document.getElementById("toast");
+const menuLista = document.getElementById("menu-lista");
+const menuChat = document.getElementById("menu-chat");
+const btnOpcoesLista = document.getElementById("btn-opcoes-lista");
+const btnOpcoesChat = document.getElementById("btn-opcoes-chat");
+const opcaoDados = document.getElementById("opcao-dados");
+const opcaoChatFixar = document.getElementById("opcao-chat-fixar");
+const opcaoChatFavoritar = document.getElementById("opcao-chat-favoritar");
+const btnBuscarMensagens = document.getElementById("btn-buscar-mensagens");
+const buscaMensagens = document.getElementById("busca-mensagens");
+const btnEmoji = document.getElementById("btn-emoji");
+const painelEmoji = document.getElementById("painel-emoji");
+const btnAnexar = document.getElementById("btn-anexar");
 
 const TEXTO_APAGADA = "Esta mensagem foi apagada";
 
@@ -137,6 +149,8 @@ function renderizarMensagens() {
     mensagens.appendChild(div);
   });
 
+  filtrarMensagens();
+
   mensagens.scrollTop = mensagens.scrollHeight;
 }
 
@@ -149,6 +163,9 @@ async function abrirConversa(id) {
   chatNome.textContent = conversa.nome;
     // aponta o link do cabeçalho para o perfil do contato aberto
   document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.contatoId;
+  opcaoDados.href = "perfil.php?id=" + conversa.contatoId;
+  fecharBuscaMensagens();
+  painelEmoji.hidden = true;
 
   if (conversa.bloqueado) {
     chatStatus.textContent = "Você bloqueou este contato";
@@ -284,12 +301,139 @@ menu.addEventListener("click", function (evento) {
   if (botao.dataset.acao === "apagar") pedirApagar(alvoMenu.id);
 });
 
+function filtrarMensagens() {
+  const termo = buscaMensagens.hidden ? "" : buscaMensagens.value.trim().toLowerCase();
+
+  mensagens.querySelectorAll(".mensagem").forEach(function (div) {
+    const p = div.querySelector(".mensagem-texto");
+    if (p.dataset.original === undefined) p.dataset.original = p.textContent;
+    const original = p.dataset.original;
+    const posicao = original.toLowerCase().indexOf(termo);
+
+    p.textContent = original;
+    div.classList.toggle("oculta", termo !== "" && posicao === -1);
+
+    if (termo && posicao !== -1) {
+      const marca = document.createElement("mark");
+      marca.textContent = original.slice(posicao, posicao + termo.length);
+      p.textContent = "";
+      p.append(original.slice(0, posicao), marca, original.slice(posicao + termo.length));
+    }
+  });
+}
+
+function fecharBuscaMensagens() {
+  buscaMensagens.value = "";
+  buscaMensagens.hidden = true;
+  btnBuscarMensagens.setAttribute("aria-expanded", "false");
+  filtrarMensagens();
+}
+
+function abrirMenuNoBotao(menuAlvo, botao) {
+  fecharMenus();
+  const caixa = botao.getBoundingClientRect();
+  menuAlvo.hidden = false;
+  menuAlvo.style.top = caixa.bottom + 4 + "px";
+  menuAlvo.style.left = Math.max(8, Math.min(caixa.right - menuAlvo.offsetWidth, window.innerWidth - menuAlvo.offsetWidth - 8)) + "px";
+  botao.setAttribute("aria-expanded", "true");
+}
+
+function fecharMenus() {
+  fecharMenu();
+  menuLista.hidden = true;
+  menuChat.hidden = true;
+  btnOpcoesLista.setAttribute("aria-expanded", "false");
+  btnOpcoesChat.setAttribute("aria-expanded", "false");
+}
+
+function fecharChat() {
+  idAtual = null;
+  chat.hidden = true;
+  boasVindas.hidden = false;
+  app.classList.remove("chat-aberto");
+  renderizarLista();
+}
+
+btnOpcoesLista.addEventListener("click", function (evento) {
+  evento.stopPropagation();
+  if (menuLista.hidden) abrirMenuNoBotao(menuLista, btnOpcoesLista);
+  else fecharMenus();
+});
+
+btnOpcoesChat.addEventListener("click", function (evento) {
+  evento.stopPropagation();
+  if (!menuChat.hidden) {
+    fecharMenus();
+    return;
+  }
+  const conversa = buscarConversa(idAtual);
+  opcaoChatFixar.textContent = conversa.fixada ? "Desafixar conversa" : "Fixar conversa";
+  opcaoChatFavoritar.textContent = conversa.favorita ? "Desfavoritar" : "Favoritar";
+  abrirMenuNoBotao(menuChat, btnOpcoesChat);
+});
+
+menuChat.addEventListener("click", function (evento) {
+  const botao = evento.target.closest("[data-chat]");
+  if (!botao) return;
+  fecharMenus();
+  if (botao.dataset.chat === "fixar") alterarConversa("fixar", idAtual);
+  if (botao.dataset.chat === "favoritar") alterarConversa("favoritar", idAtual);
+  if (botao.dataset.chat === "fechar") fecharChat();
+});
+
+btnBuscarMensagens.addEventListener("click", function () {
+  if (buscaMensagens.hidden) {
+    buscaMensagens.hidden = false;
+    btnBuscarMensagens.setAttribute("aria-expanded", "true");
+    buscaMensagens.focus();
+  } else {
+    fecharBuscaMensagens();
+  }
+});
+
+buscaMensagens.addEventListener("input", filtrarMensagens);
+
+btnEmoji.addEventListener("click", function (evento) {
+  evento.stopPropagation();
+  if (campoMensagem.disabled) return;
+  painelEmoji.hidden = !painelEmoji.hidden;
+  btnEmoji.setAttribute("aria-expanded", painelEmoji.hidden ? "false" : "true");
+});
+
+painelEmoji.addEventListener("click", function (evento) {
+  const botao = evento.target.closest("[data-emoji]");
+  if (!botao) return;
+  evento.stopPropagation();
+  const inicio = campoMensagem.selectionStart ?? campoMensagem.value.length;
+  const fim = campoMensagem.selectionEnd ?? campoMensagem.value.length;
+  campoMensagem.value = campoMensagem.value.slice(0, inicio) + botao.dataset.emoji + campoMensagem.value.slice(fim);
+  campoMensagem.focus();
+  campoMensagem.setSelectionRange(inicio + botao.dataset.emoji.length, inicio + botao.dataset.emoji.length);
+});
+
+btnAnexar.addEventListener("click", function () {
+  mostrarToast("O envio de arquivos não está disponível neste clone.");
+});
+
+document.querySelectorAll("[data-aviso]").forEach(function (botao) {
+  botao.addEventListener("click", function () {
+    mostrarToast(botao.dataset.aviso + " não está disponível nesta versão do clone.");
+  });
+});
+
 document.addEventListener("click", function (evento) {
-  if (!menu.contains(evento.target)) fecharMenu();
+  if (!menu.contains(evento.target) && !menuLista.contains(evento.target) && !menuChat.contains(evento.target)) fecharMenus();
+  if (!painelEmoji.contains(evento.target) && evento.target !== btnEmoji) {
+    painelEmoji.hidden = true;
+    btnEmoji.setAttribute("aria-expanded", "false");
+  }
 });
 
 document.addEventListener("keydown", function (evento) {
-  if (evento.key === "Escape") fecharMenu();
+  if (evento.key === "Escape") {
+    fecharMenus();
+    painelEmoji.hidden = true;
+  }
 });
 
 modalCancelar.addEventListener("click", fecharModal);

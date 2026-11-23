@@ -252,7 +252,7 @@ function exigirUsuarioApi(): void
 function listarConversas(PDO $pdo): array
 {
     return $pdo->query(
-        'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, cv.favorita,
+        'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, c.favorito AS favorita,
                 (SELECT COUNT(*) FROM mensagens n
                  WHERE n.conversa_id = cv.id AND n.de <> \'eu\' AND n.lida = 0) AS nao_lidas,
                 c.telefone, c.bloqueado,
@@ -267,7 +267,7 @@ function listarConversas(PDO $pdo): array
 function buscarConversaPorId(PDO $pdo, int $id): ?array
 {
     $stmt = $pdo->prepare(
-        'SELECT cv.id, cv.fixada, cv.favorita, c.bloqueado
+        'SELECT cv.id, cv.contato_id, cv.fixada, c.favorito AS favorita, c.bloqueado
          FROM conversas cv JOIN contatos c ON c.id = cv.contato_id
          WHERE cv.id = ?'
     );
@@ -289,8 +289,8 @@ function alternarFixada(PDO $pdo, array $conversa): void
 
 function alternarFavorita(PDO $pdo, array $conversa): void
 {
-    $stmt = $pdo->prepare('UPDATE conversas SET favorita = ? WHERE id = ?');
-    $stmt->execute([(int)!$conversa['favorita'], $conversa['id']]);
+    $stmt = $pdo->prepare('UPDATE contatos SET favorito = ? WHERE id = ?');
+    $stmt->execute([(int)!$conversa['favorita'], $conversa['contato_id']]);
 }
 
 function marcarComoLida(PDO $pdo, int $conversaId): void

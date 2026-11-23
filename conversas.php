@@ -22,9 +22,9 @@ require_once __DIR__ . '/includes/cabecalho.php';
     <nav class="barra-icones" aria-label="Menu principal">
       <div class="barra-icones-grupo">
         <a href="conversas.php" class="btn-icone" aria-label="Conversas" aria-current="page"><i class="bi bi-chat-left-text-fill"></i></a>
-        <button type="button" class="btn-icone" aria-label="Status"><i class="bi bi-record-circle"></i></button>
-        <button type="button" class="btn-icone" aria-label="Canais"><i class="bi bi-chat-square-dots"></i></button>
-        <button type="button" class="btn-icone" aria-label="Comunidades"><i class="bi bi-people"></i></button>
+        <button type="button" class="btn-icone" aria-label="Status" data-aviso="Status"><i class="bi bi-record-circle"></i></button>
+        <button type="button" class="btn-icone" aria-label="Canais" data-aviso="Canais"><i class="bi bi-chat-square-dots"></i></button>
+        <button type="button" class="btn-icone" aria-label="Comunidades" data-aviso="Comunidades"><i class="bi bi-people"></i></button>
       </div>
       <div class="barra-icones-grupo">
         <a href="configuracoes.php" class="avatar avatar-barra" aria-label="Perfil e configurações"><i class="bi bi-person-fill"></i></a>
@@ -36,7 +36,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
         <h1>Conversas</h1>
         <div class="painel-acoes">
           <a href="nova-conversa.php" class="btn-icone" aria-label="Nova conversa"><i class="bi bi-pencil-square"></i></a>
-          <button type="button" class="btn-icone" aria-label="Mais opções"><i class="bi bi-three-dots-vertical"></i></button>
+          <button type="button" class="btn-icone" id="btn-opcoes-lista" aria-label="Mais opções" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
         </div>
       </header>
 
@@ -74,17 +74,24 @@ require_once __DIR__ . '/includes/cabecalho.php';
             </span>
           </a>
           <div class="chat-acoes">
-            <button type="button" class="btn-icone" aria-label="Pesquisar na conversa"><i class="bi bi-search"></i></button>
-            <button type="button" class="btn-icone" aria-label="Mais opções da conversa"><i class="bi bi-three-dots-vertical"></i></button>
+            <label class="visualmente-oculto" for="busca-mensagens">Pesquisar mensagens</label>
+            <input type="search" class="busca-mensagens" id="busca-mensagens" placeholder="Pesquisar mensagens" hidden>
+            <button type="button" class="btn-icone" id="btn-buscar-mensagens" aria-label="Pesquisar na conversa" aria-expanded="false"><i class="bi bi-search"></i></button>
+            <button type="button" class="btn-icone" id="btn-opcoes-chat" aria-label="Mais opções da conversa" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
           </div>
         </header>
 
         <div class="mensagens" id="mensagens"></div>
 
         <footer class="chat-rodape">
+          <div class="painel-emoji" id="painel-emoji" role="listbox" aria-label="Emojis" hidden>
+            <?php foreach (['😀', '😂', '😍', '😎', '😢', '😡', '👍', '👏', '🙏', '🎉', '❤️', '🔥', '✅', '📚', '💻', '☕'] as $emoji): ?>
+              <button type="button" role="option" data-emoji="<?= $emoji ?>" aria-label="Inserir <?= $emoji ?>"><?= $emoji ?></button>
+            <?php endforeach; ?>
+          </div>
           <form class="form-mensagem" id="form-mensagem">
-            <button type="button" class="btn-icone" aria-label="Emojis"><i class="bi bi-emoji-smile"></i></button>
-            <button type="button" class="btn-icone" aria-label="Anexar"><i class="bi bi-plus-lg"></i></button>
+            <button type="button" class="btn-icone" id="btn-emoji" aria-label="Emojis" aria-expanded="false"><i class="bi bi-emoji-smile"></i></button>
+            <button type="button" class="btn-icone" id="btn-anexar" aria-label="Anexar"><i class="bi bi-plus-lg"></i></button>
             <label class="visualmente-oculto" for="campo-mensagem">Mensagem</label>
             <input type="text" class="campo-mensagem" id="campo-mensagem" placeholder="Digite uma mensagem" autocomplete="off">
             <button type="submit" class="btn-icone" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>
@@ -93,6 +100,19 @@ require_once __DIR__ . '/includes/cabecalho.php';
       </section>
     </main>
 
+  </div>
+
+  <div class="menu-contexto" id="menu-lista" role="menu" hidden>
+    <a href="nova-conversa.php" role="menuitem">Nova conversa</a>
+    <a href="configuracoes.php" role="menuitem">Configurações</a>
+    <a href="logout.php" role="menuitem" class="opcao-perigo">Desconectar</a>
+  </div>
+
+  <div class="menu-contexto" id="menu-chat" role="menu" hidden>
+    <a href="perfil.php" role="menuitem" id="opcao-dados">Dados do contato</a>
+    <button type="button" role="menuitem" data-chat="fixar" id="opcao-chat-fixar">Fixar conversa</button>
+    <button type="button" role="menuitem" data-chat="favoritar" id="opcao-chat-favoritar">Favoritar</button>
+    <button type="button" role="menuitem" data-chat="fechar">Fechar conversa</button>
   </div>
 
   <div class="menu-contexto" id="menu-contexto" role="menu" hidden>
