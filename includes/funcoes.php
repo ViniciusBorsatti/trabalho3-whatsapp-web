@@ -253,7 +253,9 @@ function exigirUsuarioApi(): void
 function listarConversas(PDO $pdo): array
 {
     return $pdo->query(
-        'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, cv.favorita, cv.nao_lidas,
+        'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, cv.favorita,
+                (SELECT COUNT(*) FROM mensagens n
+                 WHERE n.conversa_id = cv.id AND n.de <> \'eu\' AND n.lida = 0) AS nao_lidas,
                 c.telefone, c.bloqueado,
                 m.texto AS ultima_texto, m.apagada AS ultima_apagada, m.enviada_em AS ultima_em
          FROM conversas cv
@@ -294,7 +296,7 @@ function alternarFavorita(PDO $pdo, array $conversa): void
 
 function marcarComoLida(PDO $pdo, int $conversaId): void
 {
-    $stmt = $pdo->prepare('UPDATE conversas SET nao_lidas = 0 WHERE id = ?');
+    $stmt = $pdo->prepare("UPDATE mensagens SET lida = 1 WHERE conversa_id = ? AND de <> 'eu'");
     $stmt->execute([$conversaId]);
 }
 
