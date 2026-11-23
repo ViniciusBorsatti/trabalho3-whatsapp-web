@@ -1,4 +1,3 @@
-// Abre e fecha o modal de denúncia sem usar onclick no HTML
 const modalDenuncia = document.getElementById('modal-denuncia');
 const btnAbrirDenuncia = document.getElementById('btn-abrir-denuncia');
 

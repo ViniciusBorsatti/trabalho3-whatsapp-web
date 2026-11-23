@@ -30,8 +30,6 @@ let alvoMenu = null;
 let idParaApagar = null;
 let timerToast = null;
 
-// Todas as regras (fixar até 3, apagar até 15 min, contato bloqueado) são conferidas no PHP.
-// O JS só mostra o resultado e a mensagem de erro que a API devolve.
 async function api(url, dados) {
   const opcoes = dados ? { method: "POST", body: new URLSearchParams(dados) } : {};
   const resposta = await fetch(url, opcoes);

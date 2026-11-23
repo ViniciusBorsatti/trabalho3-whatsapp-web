@@ -23,7 +23,6 @@ const toast = document.getElementById("toast");
 
 const FORMATO_TELEFONE = /^\(\d{2}\) \d{5}-\d{4}$/;
 
-// Esconde o aviso vindo do PHP depois de alguns segundos
 if (toast.classList.contains("visivel")) {
   setTimeout(function () {
     toast.classList.remove("visivel");
@@ -76,7 +75,6 @@ btnNovo.addEventListener("click", function () {
   abrirContato(null);
 });
 
-// Os dados de cada linha vêm do PHP nos atributos data-*
 corpo.addEventListener("click", function (evento) {
   const botao = evento.target.closest("[data-acao]");
   if (!botao) return;
@@ -84,7 +82,6 @@ corpo.addEventListener("click", function (evento) {
   if (botao.dataset.acao === "excluir") abrirExcluir(botao.dataset);
 });
 
-// Validação no navegador; o PHP valida de novo ao receber
 formContato.addEventListener("submit", function (evento) {
   limparErros();
   let valido = true;

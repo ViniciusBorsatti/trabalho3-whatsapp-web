@@ -4,7 +4,6 @@ require_once __DIR__ . '/includes/funcoes.php';
 
 $token = limpar(filter_input(INPUT_GET, 'token', FILTER_UNSAFE_RAW) ?? '');
 
-// O celular precisa estar logado; depois do login ele volta para esta mesma página
 if (!usuarioLogado()) {
     if ($token !== '') {
         $_SESSION['voltar_para'] = 'conectar.php?token=' . urlencode($token);

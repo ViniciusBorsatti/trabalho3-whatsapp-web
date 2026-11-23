@@ -2,7 +2,6 @@ const contagem = document.getElementById('contagem');
 const erroConexao = document.getElementById('erro-conexao');
 const btnConectar = document.getElementById('btn-conectar');
 
-// Só mostra o tempo que falta; quem decide se o QR ainda vale é o PHP
 if (contagem) {
   let restante = Number(contagem.dataset.restante);
 

@@ -1,9 +1,3 @@
-/* ==========================================================================
-   entrada.js — QR code de conexão (RN04: vale 60 segundos e uma única vez)
-   O PHP gera o token e controla a validade; aqui só mostramos o QR,
-   fazemos a contagem e perguntamos ao servidor se o celular já confirmou.
-   ========================================================================== */
-
 (function () {
   const CHAVE_MANTER_CONECTADO = 'whatsapp_clone_manter_conectado';
   const INTERVALO_CONSULTA = 2000;
@@ -92,10 +86,8 @@
 
       token = dados.token;
       segundosRestantes = dados.restante;
-      // A imagem do QR é gerada a partir do link de conexão
       qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=' + encodeURIComponent(dados.link);
       qrLink.href = dados.link;
-      // Mostra o endereço que o celular vai abrir (precisa ser o IP do PC, não localhost)
       qrEndereco.textContent = dados.link.split('/conectar.php')[0].replace(/^https?:\/\//, '');
 
       atualizarContador();

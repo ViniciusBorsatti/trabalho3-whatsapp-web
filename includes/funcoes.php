@@ -146,7 +146,6 @@ function atualizarPerfilUsuario(PDO $pdo, int $usuarioId, string $nome, string $
 }
 
 
-/* ============================== Vinicius ============================== */
 function telefoneValido(string $telefone): bool
 {
     return (bool)preg_match('/^\(\d{2}\) \d{5}-\d{4}$/', $telefone);
@@ -375,7 +374,6 @@ function enderecoNaRede(): string
     $nome = preg_replace('/:\d+$/', '', $host);
     $porta = substr($host, strlen($nome));
 
-    // "localhost" só funciona no próprio computador; para o celular ler o QR, usamos o IP do PC na rede
     if (in_array($nome, ['localhost', '127.0.0.1', '[::1]'], true)) {
         $ip = gethostbyname(gethostname());
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && strpos($ip, '127.') !== 0) {
