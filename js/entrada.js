@@ -15,6 +15,7 @@
   const qrErro = document.getElementById('qr-erro');
   const qrEstadoConexao = document.getElementById('qr-estado-conexao');
   const qrLink = document.getElementById('qr-link');
+  const qrEndereco = document.getElementById('qr-endereco');
   const btnNovoQr = document.getElementById('btn-novo-qr');
   const checkboxManter = document.getElementById('manter-conectado');
 
@@ -94,6 +95,8 @@
       // A imagem do QR é gerada a partir do link de conexão
       qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=' + encodeURIComponent(dados.link);
       qrLink.href = dados.link;
+      // Mostra o endereço que o celular vai abrir (precisa ser o IP do PC, não localhost)
+      qrEndereco.textContent = dados.link.split('/conectar.php')[0].replace(/^https?:\/\//, '');
 
       atualizarContador();
       intervaloContagem = setInterval(function () {

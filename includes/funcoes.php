@@ -369,11 +369,27 @@ function descreverNavegador(string $agente): string
     return $navegador . ' no ' . $sistema;
 }
 
+function enderecoNaRede(): string
+{
+    $host = $_SERVER['HTTP_HOST'];
+    $nome = preg_replace('/:\d+$/', '', $host);
+    $porta = substr($host, strlen($nome));
+
+    // "localhost" só funciona no próprio computador; para o celular ler o QR, usamos o IP do PC na rede
+    if (in_array($nome, ['localhost', '127.0.0.1', '[::1]'], true)) {
+        $ip = gethostbyname(gethostname());
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) && strpos($ip, '127.') !== 0) {
+            return $ip . $porta;
+        }
+    }
+    return $host;
+}
+
 function linkConectar(string $token): string
 {
     $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $pasta = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']))), '/');
-    return $protocolo . '://' . $_SERVER['HTTP_HOST'] . $pasta . '/conectar.php?token=' . urlencode($token);
+    return $protocolo . '://' . enderecoNaRede() . $pasta . '/conectar.php?token=' . urlencode($token);
 }
 
 function gerarQr(PDO $pdo): string

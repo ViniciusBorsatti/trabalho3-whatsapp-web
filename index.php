@@ -69,6 +69,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
           <p class="qr-status" id="qr-contador" aria-live="polite">
             Gerando QR code...
           </p>
+          <p class="qr-endereco" id="qr-endereco"></p>
           <p class="erro-campo" id="qr-erro" role="alert"></p>
 
           <div class="qr-botoes">

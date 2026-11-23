@@ -39,7 +39,11 @@ Para importar o banco de novo, apague antes o banco `whatsapp_clone` no phpMyAdm
 2. No celular, entre na conta (`login.php`) e leia o QR code, ou, no mesmo computador, clique em **Abrir link do QR** para abrir a tela do celular em outra aba.
 3. Na tela do celular, toque em **Conectar**. O computador entra sozinho nas Conversas.
 
-Se o celular estiver em outro aparelho, ele precisa estar na mesma rede e acessar o projeto pelo IP do computador (por exemplo `http://192.168.0.10/trabalho3-whatsapp-web/`), porque `localhost` só funciona no próprio computador.
+Para ler o QR com a câmera de um celular de verdade:
+
+- o celular precisa estar no **mesmo Wi-Fi** que o computador;
+- o QR já usa o IP do computador na rede no lugar de `localhost` (o endereço aparece embaixo do QR). Se aparecer um IP errado, abra o site no computador pelo IP certo, por exemplo `http://192.168.0.10/trabalho3-whatsapp-web/` (veja o IP com o comando `ipconfig`, em "Endereço IPv4");
+- na primeira vez, o Windows pode perguntar se libera o Apache no firewall: marque **Redes privadas** e permita.
 
 ## Páginas
 
