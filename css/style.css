@@ -13,9 +13,20 @@
   --lida: #53BDEB;
   --erro: #EA0038;
   --fonte: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --verde-claro: #D9FDD3;
+  --perigo: var(--erro);
+  --texto-sec: var(--texto-2);
+  --borda: var(--divisoria);
+  --cartao: var(--fundo);
+  --fundo-card: var(--fundo);
+  --hover-item: var(--painel);
+  --raio-padrao: 8px;
+  --raio-pilula: 24px;
+  --transicao: 0.2s ease;
 }
 
 [data-tema="escuro"] {
+  --verde-claro: #005C4B;
   --fundo: #111B21;
   --painel: #202C33;
   --fundo-chat: #0B141A;
