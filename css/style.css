@@ -452,3 +452,13 @@ ol {
 .rodape-educacional a {
   color: var(--verde-escuro);
 }
+
+.msg-erro-geral {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--erro);
+}
+
+.msg-erro-geral.sucesso {
+  color: var(--verde-escuro);
+}

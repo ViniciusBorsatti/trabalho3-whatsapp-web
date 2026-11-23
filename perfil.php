@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/funcoes.php';
 
 $tituloPagina = 'WhatsApp Web — Perfil do contato';
 $cssPagina = 'css/perfil.css';
-$scriptsDefer = ['js/tema.js'];
+$scriptsDefer = ['js/tema.js', 'js/perfil.js'];
 $tipoRodape = 'educacional';
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $contato = null;
@@ -82,18 +82,18 @@ require_once __DIR__ . '/includes/cabecalho.php';
       <section class="perfil-bloco perfil-acoes" aria-label="Ações sobre o contato">
         <form method="post"><input type="hidden" name="acao" value="favoritar"><button type="submit" class="acao-item"><i class="bi <?= $contato['favorito'] ? 'bi-star-fill' : 'bi-star' ?>" aria-hidden="true"></i><span><?= $contato['favorito'] ? 'Remover dos favoritos' : 'Favoritar' ?></span></button></form>
         <form method="post"><input type="hidden" name="acao" value="bloquear"><button type="submit" class="acao-item acao-perigo"><i class="bi bi-slash-circle" aria-hidden="true"></i><span><?= $contato['bloqueado'] ? 'Desbloquear contato' : 'Bloquear contato' ?></span></button></form>
-        <button type="button" class="acao-item acao-perigo" id="btn-abrir-denuncia" onclick="document.getElementById('modal-denuncia').classList.add('aberto')"><i class="bi bi-hand-thumbs-down" aria-hidden="true"></i><span>Denunciar <?= esc($contato['nome']) ?></span></button>
+        <button type="button" class="acao-item acao-perigo" id="btn-abrir-denuncia"><i class="bi bi-hand-thumbs-down" aria-hidden="true"></i><span>Denunciar <?= esc($contato['nome']) ?></span></button>
       </section>
     </article>
     <div class="modal-overlay <?= isset($_POST['acao']) && $_POST['acao'] === 'denunciar' && $erro ? 'aberto' : '' ?>" id="modal-denuncia" role="dialog" aria-modal="true" aria-labelledby="modal-denuncia-titulo">
-      <div class="modal-caixa"><div class="modal-cabecalho"><h2 id="modal-denuncia-titulo">Denunciar <?= esc($contato['nome']) ?>?</h2><button type="button" class="btn-fechar-modal" onclick="document.getElementById('modal-denuncia').classList.remove('aberto')" aria-label="Fechar janela"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>
+      <div class="modal-caixa"><div class="modal-cabecalho"><h2 id="modal-denuncia-titulo">Denunciar <?= esc($contato['nome']) ?>?</h2><button type="button" class="btn-fechar-modal" data-fechar-denuncia aria-label="Fechar janela"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>
         <p class="modal-subtitulo">A denúncia é enviada ao administrador do sistema. A pessoa não é avisada.</p>
         <form method="post" action="perfil.php?id=<?= (int)$id ?>">
           <input type="hidden" name="acao" value="denunciar">
           <div class="campo-grupo"><label for="motivo-denuncia">Motivo *</label><select id="motivo-denuncia" name="motivo" class="campo-controle" required><option value="">Selecione...</option><option value="spam" <?= ($_POST['motivo'] ?? '') === 'spam' ? 'selected' : '' ?>>Spam ou mensagens indesejadas</option><option value="assedio" <?= ($_POST['motivo'] ?? '') === 'assedio' ? 'selected' : '' ?>>Assédio ou intimidação</option><option value="conteudo-improprio" <?= ($_POST['motivo'] ?? '') === 'conteudo-improprio' ? 'selected' : '' ?>>Conteúdo impróprio</option><option value="perfil-falso" <?= ($_POST['motivo'] ?? '') === 'perfil-falso' ? 'selected' : '' ?>>Perfil falso ou fraude</option><option value="outro" <?= ($_POST['motivo'] ?? '') === 'outro' ? 'selected' : '' ?>>Outro motivo</option></select></div>
           <div class="campo-grupo"><label for="descricao-denuncia">Descrição (opcional, até 500 caracteres)</label><textarea id="descricao-denuncia" name="descricao" class="campo-controle" rows="4" maxlength="500"><?= esc($_POST['descricao'] ?? '') ?></textarea></div>
           <label class="checkbox-bloquear" for="bloquear-tambem"><input type="checkbox" id="bloquear-tambem" name="bloquearTambem" <?= isset($_POST['bloquearTambem']) ? 'checked' : '' ?>><span>Bloquear o contato também</span></label>
-          <div class="modal-acoes"><button type="button" class="btn btn-secundario" onclick="document.getElementById('modal-denuncia').classList.remove('aberto')">Cancelar</button><button type="submit" class="btn btn-perigo-solido">Denunciar</button></div>
+          <div class="modal-acoes"><button type="button" class="btn btn-secundario" data-fechar-denuncia>Cancelar</button><button type="submit" class="btn btn-perigo-solido">Denunciar</button></div>
         </form>
       </div>
     </div>

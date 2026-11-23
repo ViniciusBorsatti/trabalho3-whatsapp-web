@@ -50,7 +50,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
       <section class="cartao-login" aria-labelledby="titulo-login">
         <h1 id="titulo-login">Entrar</h1>
 
-        <p class="msg-erro-geral" id="erro-geral" role="alert"><?= esc($erroGeral ?: ($msgFlash['texto'] ?? '')) ?></p>
+        <p class="msg-erro-geral<?= !$erroGeral && ($msgFlash['tipo'] ?? '') === 'sucesso' ? ' sucesso' : '' ?>" id="erro-geral" role="alert"><?= esc($erroGeral ?: ($msgFlash['texto'] ?? '')) ?></p>
 
         <!-- novalidate desliga a validação nativa; a validação fica no JS e no PHP -->
         <form id="form-login" action="login.php" method="post" novalidate>
