@@ -540,3 +540,8 @@ function abrirConversaComContato(PDO $pdo, int $contatoId): ?int
     $stmt->execute([$contatoId, $contato['nome'], (int)$contato['grupo']]);
     return (int)$pdo->lastInsertId();
 }
+
+function fotoContato(int $id): string
+{
+    return is_file(__DIR__ . '/../img/avatares/' . $id . '.svg') ? 'img/avatares/' . $id . '.svg' : 'img/avatar-padrao.svg';
+}

@@ -71,8 +71,8 @@ require_once __DIR__ . '/includes/cabecalho.php';
 
       <button type="button" class="perfil-usuario-card" id="btn-editar-perfil">
         <img
-          src="img/avatar-padrao.svg"
-          alt="Avatar padrão do usuário <?= esc($usuarioAtual['nome']) ?>"
+          src="img/avatares/usuario.svg"
+          alt="Foto de perfil de <?= esc($usuarioAtual['nome']) ?>"
           width="60"
           height="60"
         >

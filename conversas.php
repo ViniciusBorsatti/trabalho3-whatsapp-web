@@ -27,7 +27,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
         <button type="button" class="btn-icone" aria-label="Comunidades" data-aviso="Comunidades"><i class="bi bi-people"></i></button>
       </div>
       <div class="barra-icones-grupo">
-        <a href="configuracoes.php" class="avatar avatar-barra" aria-label="Perfil e configurações"><i class="bi bi-person-fill"></i></a>
+        <a href="configuracoes.php" class="avatar avatar-barra" aria-label="Perfil e configurações"><img src="img/avatares/usuario.svg" alt="Sua foto de perfil"></a>
       </div>
     </nav>
 

@@ -76,6 +76,10 @@ Para ler o QR com a câmera de um celular de verdade:
 - Validação no PHP em todos os formulários, mantendo os dados preenchidos quando há erro
 - Tema claro e escuro, layout responsivo
 
+## Imagens
+
+As fotos de perfil dos contatos fictícios ficam em `img/avatares/` e foram geradas com o DiceBear, usando os estilos Notionists (pessoas) e Shapes (grupos), ambos com licença CC0 (domínio público).
+
 ## Regras de negócio (validadas no PHP)
 
 - **RN01:** no máximo 3 conversas fixadas

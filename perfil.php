@@ -69,7 +69,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
     <?php if ($contato): ?>
     <article class="perfil-painel">
       <section class="perfil-cabecalho" aria-label="Informações principais do contato">
-        <img id="perfil-avatar" src="img/avatar-padrao.svg" alt="Avatar padrão de <?= esc($contato['nome']) ?>" class="perfil-avatar" width="140" height="140">
+        <img id="perfil-avatar" src="<?= esc(fotoContato((int)$contato['id'])) ?>" alt="Foto de <?= esc($contato['nome']) ?>" class="perfil-avatar" width="140" height="140">
         <h2 id="perfil-nome"><?= esc($contato['nome']) ?></h2>
         <p id="perfil-telefone" class="perfil-telefone"><?= esc($contato['grupo'] ? 'Grupo' : '+55 ' . $contato['telefone']) ?></p>
         <div class="perfil-badges" id="perfil-badges">

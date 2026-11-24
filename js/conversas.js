@@ -112,7 +112,11 @@ function renderizarLista() {
     if (c.id === idAtual) li.classList.add("ativo");
 
     const avatar = criar("span", "avatar");
-    avatar.appendChild(criar("i", c.grupo ? "bi bi-people-fill" : "bi bi-person-fill"));
+    const foto = criar("img");
+    foto.src = c.foto;
+    foto.alt = "Foto de " + c.nome;
+    foto.loading = "lazy";
+    avatar.appendChild(foto);
 
     const info = criar("div", "item-info");
 
@@ -187,6 +191,10 @@ async function abrirConversa(id) {
   boasVindas.hidden = true;
   chat.hidden = false;
   chatNome.textContent = conversa.nome;
+  const fotoChat = criar("img");
+  fotoChat.src = conversa.foto;
+  fotoChat.alt = "Foto de " + conversa.nome;
+  document.getElementById("chat-avatar").replaceChildren(fotoChat);
     // aponta o link do cabeçalho para o perfil do contato aberto
   document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.contatoId;
   opcaoDados.href = "perfil.php?id=" + conversa.contatoId;

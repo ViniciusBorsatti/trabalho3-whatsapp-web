@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         return [
             'id'        => (int)$c['id'],
             'contatoId' => (int)$c['contato_id'],
+            'foto'      => fotoContato((int)$c['contato_id']),
             'nome'      => $c['nome'],
             'telefone'  => $c['telefone'],
             'grupo'     => (bool)$c['grupo'],

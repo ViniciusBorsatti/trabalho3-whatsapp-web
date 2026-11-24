@@ -146,7 +146,7 @@ require_once __DIR__ . '/../includes/cabecalho.php';
             <?php endif; ?>
             <?php foreach ($contatos as $c): ?>
               <tr>
-                <td><?= esc($c['nome']) ?></td>
+                <td><span class="painel-contato"><img src="../<?= esc(fotoContato((int)$c['id'])) ?>" alt="" width="32" height="32"><?= esc($c['nome']) ?></span></td>
                 <td><?= esc($c['telefone']) ?></td>
                 <td><?= esc($c['recado']) ?></td>
                 <td><?= (int)$c['total_mensagens'] ?></td>

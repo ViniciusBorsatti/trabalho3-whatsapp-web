@@ -306,3 +306,14 @@ body {
     width: auto;
   }
 }
+
+.painel-contato {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.painel-contato img {
+  border-radius: 50%;
+  flex-shrink: 0;
+}

@@ -78,7 +78,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
           <?php if ($letra !== $inicial): $letra = $inicial; ?><div class="grupo-letra"><?= esc($letra) ?></div><?php endif; ?>
           <div class="contato-item">
             <a class="contato-principal" href="conversas.php?contato=<?= (int)$contato['id'] ?>">
-              <img class="contato-avatar" src="img/avatar-padrao.svg" alt="Avatar padrão de <?= esc($contato['nome']) ?>" width="49" height="49">
+              <img class="contato-avatar" src="<?= esc(fotoContato((int)$contato['id'])) ?>" alt="Foto de <?= esc($contato['nome']) ?>" width="49" height="49">
               <div class="contato-info"><p class="contato-nome"><?= esc($contato['nome']) ?></p><p class="contato-recado"><?= esc($contato['recado'] ?: 'Disponível') ?> · <?= esc($contato['telefone']) ?></p></div>
             </a>
             <a class="contato-link-perfil" href="perfil.php?id=<?= (int)$contato['id'] ?>" aria-label="Ver perfil de <?= esc($contato['nome']) ?>">Perfil</a>
