@@ -449,7 +449,9 @@ function enderecoNaRede(): string
 
 function linkConectar(string $token): string
 {
-    $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+    $protocolo = $https ? 'https' : 'http';
     $pasta = rtrim(str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME']))), '/');
     return $protocolo . '://' . enderecoNaRede() . $pasta . '/conectar.php?token=' . urlencode($token);
 }
