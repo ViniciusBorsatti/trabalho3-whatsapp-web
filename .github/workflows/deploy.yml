@@ -1,0 +1,29 @@
+name: Publicar no InfinityFree
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USUARIO }}
+          password: ${{ secrets.FTP_SENHA }}
+          server-dir: /htdocs/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            uploads/**
+            includes/config.php
+            includes/config.exemplo.php
+            banco.sql
+            banco-hospedagem.sql
+            PROMPTS.md
