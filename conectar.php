@@ -34,7 +34,7 @@ if (!$conectado && $erro === '') {
     } elseif ($qr['status'] !== 'aguardando') {
         $erro = 'Este QR code já foi usado. Gere um novo no computador.';
     } elseif ($qr['restante'] <= 0) {
-        $erro = 'QR code expirado. Gere um novo no computador.';
+        $erro = 'Esse QR code expirou. No computador, clique em "Gerar novo QR code" e leia de novo com a câmera.';
     }
 }
 
