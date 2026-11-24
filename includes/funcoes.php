@@ -256,7 +256,7 @@ function listarConversas(PDO $pdo): array
                 (SELECT COUNT(*) FROM mensagens n
                  WHERE n.conversa_id = cv.id AND n.de <> \'eu\' AND n.lida = 0) AS nao_lidas,
                 c.telefone, c.bloqueado,
-                m.texto AS ultima_texto, m.apagada AS ultima_apagada, m.enviada_em AS ultima_em
+                m.texto AS ultima_texto, m.apagada AS ultima_apagada, m.arquivo_tipo AS ultima_tipo, m.enviada_em AS ultima_em
          FROM conversas cv
          JOIN contatos c ON c.id = cv.contato_id
          LEFT JOIN mensagens m ON m.id = (SELECT MAX(id) FROM mensagens WHERE conversa_id = cv.id)
@@ -301,7 +301,7 @@ function marcarComoLida(PDO $pdo, int $conversaId): void
 
 function listarMensagens(PDO $pdo, int $conversaId): array
 {
-    $stmt = $pdo->prepare('SELECT id, de, texto, apagada, enviada_em FROM mensagens WHERE conversa_id = ? ORDER BY enviada_em, id');
+    $stmt = $pdo->prepare('SELECT id, de, texto, apagada, arquivo, arquivo_tipo, enviada_em FROM mensagens WHERE conversa_id = ? ORDER BY enviada_em, id');
     $stmt->execute([$conversaId]);
     return $stmt->fetchAll();
 }
@@ -318,7 +318,7 @@ function enviarMensagem(PDO $pdo, array $conversa, string $texto): int
 
 function apagarParaTodos(PDO $pdo, int $mensagemId): void
 {
-    $stmt = $pdo->prepare('SELECT de, apagada, TIMESTAMPDIFF(SECOND, enviada_em, NOW()) AS segundos FROM mensagens WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT de, apagada, arquivo, TIMESTAMPDIFF(SECOND, enviada_em, NOW()) AS segundos FROM mensagens WHERE id = ?');
     $stmt->execute([$mensagemId]);
     $mensagem = $stmt->fetch();
 
@@ -332,8 +332,12 @@ function apagarParaTodos(PDO $pdo, int $mensagemId): void
         throw new DomainException('Só é possível apagar para todos mensagens com até 15 minutos.');
     }
 
-    $stmt = $pdo->prepare('UPDATE mensagens SET apagada = 1 WHERE id = ?');
+    $stmt = $pdo->prepare('UPDATE mensagens SET apagada = 1, arquivo = NULL WHERE id = ?');
     $stmt->execute([$mensagemId]);
+
+    if ($mensagem['arquivo'] && is_file(__DIR__ . '/../' . $mensagem['arquivo'])) {
+        unlink(__DIR__ . '/../' . $mensagem['arquivo']);
+    }
 }
 
 function formatarMensagem(array $m): array
@@ -343,8 +347,68 @@ function formatarMensagem(array $m): array
         'de'      => $m['de'],
         'texto'   => $m['apagada'] ? '' : $m['texto'],
         'apagada' => (bool)$m['apagada'],
+        'arquivo' => $m['apagada'] ? null : $m['arquivo'],
+        'tipo'    => $m['apagada'] ? null : $m['arquivo_tipo'],
         'hora'    => date('H:i', strtotime($m['enviada_em'])),
     ];
+}
+
+const TAMANHO_MAXIMO_ARQUIVO = 5 * 1024 * 1024;
+const TIPOS_ARQUIVO = [
+    'image/jpeg'      => ['jpg', 'imagem'],
+    'image/png'       => ['png', 'imagem'],
+    'image/gif'       => ['gif', 'imagem'],
+    'image/webp'      => ['webp', 'imagem'],
+    'application/pdf' => ['pdf', 'documento'],
+];
+
+function tipoDoArquivo(string $caminho): string
+{
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $tipo = finfo_file($finfo, $caminho);
+        finfo_close($finfo);
+        return (string)$tipo;
+    }
+    $imagem = @getimagesize($caminho);
+    if ($imagem) {
+        return $imagem['mime'];
+    }
+    return file_get_contents($caminho, false, null, 0, 5) === '%PDF-' ? 'application/pdf' : '';
+}
+
+function enviarArquivo(PDO $pdo, array $conversa, array $arquivo): int
+{
+    if ($conversa['bloqueado']) {
+        throw new DomainException('Você bloqueou este contato. Desbloqueie para enviar mensagens.');
+    }
+    if (($arquivo['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file($arquivo['tmp_name'])) {
+        throw new DomainException('Não foi possível receber o arquivo. Tente de novo.');
+    }
+    if ($arquivo['size'] > TAMANHO_MAXIMO_ARQUIVO) {
+        throw new DomainException('O arquivo pode ter no máximo 5 MB.');
+    }
+
+    $tipo = tipoDoArquivo($arquivo['tmp_name']);
+    if (!isset(TIPOS_ARQUIVO[$tipo])) {
+        throw new DomainException('Envie uma foto (JPG, PNG, GIF ou WEBP) ou um PDF.');
+    }
+    [$extensao, $categoria] = TIPOS_ARQUIVO[$tipo];
+
+    $pasta = __DIR__ . '/../uploads';
+    if (!is_dir($pasta)) {
+        mkdir($pasta, 0755, true);
+    }
+    $nomeSalvo = bin2hex(random_bytes(16)) . '.' . $extensao;
+    if (!move_uploaded_file($arquivo['tmp_name'], $pasta . '/' . $nomeSalvo)) {
+        throw new DomainException('Não foi possível salvar o arquivo.');
+    }
+
+    $nomeOriginal = basename((string)$arquivo['name']);
+    $nomeOriginal = function_exists('mb_substr') ? mb_substr($nomeOriginal, 0, 150) : substr($nomeOriginal, 0, 150);
+    $stmt = $pdo->prepare("INSERT INTO mensagens (conversa_id, de, texto, arquivo, arquivo_tipo) VALUES (?, 'eu', ?, ?, ?)");
+    $stmt->execute([$conversa['id'], $nomeOriginal, 'uploads/' . $nomeSalvo, $categoria]);
+    return (int)$pdo->lastInsertId();
 }
 
 const VALIDADE_QR_SEGUNDOS = 60;

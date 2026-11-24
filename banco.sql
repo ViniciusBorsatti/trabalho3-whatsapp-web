@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS mensagens (
   texto TEXT NOT NULL,
   apagada TINYINT(1) NOT NULL DEFAULT 0,
   lida TINYINT(1) NOT NULL DEFAULT 1,
+  arquivo VARCHAR(255) NULL,
+  arquivo_tipo ENUM('imagem', 'documento') NULL,
   enviada_em DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (conversa_id) REFERENCES conversas(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

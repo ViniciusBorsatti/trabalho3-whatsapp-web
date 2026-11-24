@@ -31,6 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             responderJson(['ok' => true, 'id' => $id], 201);
         }
 
+        if ($acao === 'arquivo') {
+            $conversa = buscarConversaPorId($pdo, (int)filter_input(INPUT_POST, 'conversa', FILTER_VALIDATE_INT));
+            if (!$conversa) {
+                responderJson(['erro' => 'Conversa não encontrada.'], 404);
+            }
+            if (!isset($_FILES['arquivo'])) {
+                responderJson(['erro' => 'Escolha um arquivo para enviar.'], 422);
+            }
+            $id = enviarArquivo($pdo, $conversa, $_FILES['arquivo']);
+            responderJson(['ok' => true, 'id' => $id], 201);
+        }
+
         if ($acao === 'apagar') {
             apagarParaTodos($pdo, (int)filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT));
             responderJson(['ok' => true]);

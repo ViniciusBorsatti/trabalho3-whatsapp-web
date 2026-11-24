@@ -68,6 +68,7 @@ Para ler o QR com a câmera de um celular de verdade:
 - Lista pública de contatos com busca e cadastro de novo contato
 - Perfil do contato com favoritar, bloquear e denúncia gravada no banco
 - Conversas carregadas do banco com `fetch` (arquivos da pasta `api/` respondem em JSON)
+- Envio de fotos (JPG, PNG, GIF, WEBP) e PDF de até 5 MB nas conversas; o PHP confere o tipo real do arquivo e salva na pasta `uploads/`
 - Validação no PHP em todos os formulários, mantendo os dados preenchidos quando há erro
 - Tema claro e escuro, layout responsivo
 

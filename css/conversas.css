@@ -579,3 +579,39 @@ body > .rodape-aviso {
     grid-template-columns: repeat(6, 40px);
   }
 }
+
+.mensagem-foto {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mensagem-foto img {
+  display: block;
+  max-width: 280px;
+  max-height: 320px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.mensagem-documento {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: rgba(11, 20, 26, 0.05);
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.mensagem-documento i {
+  font-size: 26px;
+  color: var(--erro);
+}
+
+@media (max-width: 767px) {
+  .mensagem-foto img {
+    max-width: 200px;
+  }
+}

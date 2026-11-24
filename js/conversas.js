@@ -31,6 +31,8 @@ const buscaMensagens = document.getElementById("busca-mensagens");
 const btnEmoji = document.getElementById("btn-emoji");
 const painelEmoji = document.getElementById("painel-emoji");
 const btnAnexar = document.getElementById("btn-anexar");
+const campoArquivo = document.getElementById("campo-arquivo");
+const TAMANHO_MAXIMO = 5 * 1024 * 1024;
 
 const TEXTO_APAGADA = "Esta mensagem foi apagada";
 
@@ -141,6 +143,30 @@ function renderizarMensagens() {
 
     const texto = criar("p", "mensagem-texto", m.apagada ? TEXTO_APAGADA : m.texto);
     if (m.apagada) texto.style.fontStyle = "italic";
+
+    if (m.arquivo && m.tipo === "imagem") {
+      const link = criar("a", "mensagem-foto");
+      link.href = m.arquivo;
+      link.target = "_blank";
+      link.rel = "noopener";
+      const img = criar("img");
+      img.src = m.arquivo;
+      img.alt = "Foto enviada: " + m.texto;
+      img.loading = "lazy";
+      link.appendChild(img);
+      div.appendChild(link);
+      texto.classList.add("visualmente-oculto");
+    }
+
+    if (m.arquivo && m.tipo === "documento") {
+      const link = criar("a", "mensagem-documento");
+      link.href = m.arquivo;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.append(criar("i", "bi bi-file-earmark-pdf-fill"), criar("span", "", m.texto));
+      div.appendChild(link);
+      texto.classList.add("visualmente-oculto");
+    }
 
     const info = criar("span", "mensagem-info", m.hora);
     if (m.de === "eu") info.appendChild(criar("i", "bi bi-check2-all lida"));
@@ -412,7 +438,36 @@ painelEmoji.addEventListener("click", function (evento) {
 });
 
 btnAnexar.addEventListener("click", function () {
-  mostrarToast("O envio de arquivos não está disponível neste clone.");
+  if (!idAtual || campoMensagem.disabled) return;
+  campoArquivo.click();
+});
+
+campoArquivo.addEventListener("change", async function () {
+  const arquivo = campoArquivo.files[0];
+  campoArquivo.value = "";
+  if (!arquivo) return;
+
+  if (arquivo.size > TAMANHO_MAXIMO) {
+    mostrarToast("O arquivo pode ter no máximo 5 MB.");
+    return;
+  }
+
+  const dados = new FormData();
+  dados.append("acao", "arquivo");
+  dados.append("conversa", idAtual);
+  dados.append("arquivo", arquivo);
+
+  try {
+    mostrarToast("Enviando arquivo...");
+    const resposta = await fetch("api/mensagens.php", { method: "POST", body: dados });
+    const json = await resposta.json();
+    if (!resposta.ok) throw new Error(json.erro || "Não foi possível enviar o arquivo.");
+    await carregarMensagens();
+    await carregarConversas();
+    mostrarToast("Arquivo enviado.");
+  } catch (erro) {
+    mostrarToast(erro.message);
+  }
 });
 
 document.querySelectorAll("[data-aviso]").forEach(function (botao) {

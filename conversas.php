@@ -91,7 +91,9 @@ require_once __DIR__ . '/includes/cabecalho.php';
           </div>
           <form class="form-mensagem" id="form-mensagem">
             <button type="button" class="btn-icone" id="btn-emoji" aria-label="Emojis" aria-expanded="false"><i class="bi bi-emoji-smile"></i></button>
-            <button type="button" class="btn-icone" id="btn-anexar" aria-label="Anexar"><i class="bi bi-plus-lg"></i></button>
+            <button type="button" class="btn-icone" id="btn-anexar" aria-label="Enviar foto ou documento"><i class="bi bi-plus-lg"></i></button>
+            <label class="visualmente-oculto" for="campo-arquivo">Foto ou documento</label>
+            <input type="file" id="campo-arquivo" accept="image/jpeg,image/png,image/gif,image/webp,application/pdf" hidden>
             <label class="visualmente-oculto" for="campo-mensagem">Mensagem</label>
             <input type="text" class="campo-mensagem" id="campo-mensagem" placeholder="Digite uma mensagem" autocomplete="off">
             <button type="submit" class="btn-icone" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             'bloqueado' => (bool)$c['bloqueado'],
             'naoLidas'  => (int)$c['nao_lidas'],
             'ultima'    => $c['ultima_em'] === null ? null : [
-                'texto'   => $c['ultima_apagada'] ? '' : $c['ultima_texto'],
+                'texto'   => $c['ultima_apagada'] ? '' : ($c['ultima_tipo'] === 'imagem' ? '📷 Foto' : ($c['ultima_tipo'] === 'documento' ? '📄 ' . $c['ultima_texto'] : $c['ultima_texto'])),
                 'apagada' => (bool)$c['ultima_apagada'],
                 'hora'    => date('H:i', strtotime($c['ultima_em'])),
             ],
