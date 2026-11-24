@@ -4,6 +4,10 @@ $banco = 'whatsapp_clone';
 $usuario = 'root';
 $senha = '';
 
+if (is_file(__DIR__ . '/config.php')) {
+    require __DIR__ . '/config.php';
+}
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$banco;charset=utf8mb4", $usuario, $senha, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
