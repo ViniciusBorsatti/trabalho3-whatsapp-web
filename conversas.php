@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/verifica-usuario.php';
 $abrirConversa = 0;
 $contatoId = filter_input(INPUT_GET, 'contato', FILTER_VALIDATE_INT);
 if ($contatoId) {
-    $abrirConversa = abrirConversaComContato($pdo, $contatoId) ?? 0;
+    $abrirConversa = abrirConversaComContato($pdo, $contatoId, (int)usuarioLogado()['id']) ?? 0;
 }
 
 $tituloPagina = 'Conversas – WhatsApp Web';
@@ -18,7 +18,7 @@ $tipoRodape   = 'aviso';
 
 require_once __DIR__ . '/includes/cabecalho.php';
 ?>
-  <div class="app" id="app" data-abrir="<?= (int)$abrirConversa ?>">
+  <div class="app" id="app" data-abrir="<?= esc((string)$abrirConversa) ?>">
     <nav class="barra-icones" aria-label="Menu principal">
       <div class="barra-icones-grupo">
         <a href="conversas.php" class="btn-icone" aria-label="Conversas" aria-current="page"><i class="bi bi-chat-left-text-fill"></i></a>
@@ -35,6 +35,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
       <header class="painel-cabecalho">
         <h1>Conversas</h1>
         <div class="painel-acoes">
+          <button type="button" class="btn-icone" id="btn-conversa-usuario" aria-label="Conversar com um usuário do site" title="Conversar com um usuário do site"><i class="bi bi-person-plus"></i></button>
           <a href="nova-conversa.php" class="btn-icone" aria-label="Nova conversa"><i class="bi bi-pencil-square"></i></a>
           <button type="button" class="btn-icone" id="btn-opcoes-lista" aria-label="Mais opções" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
         </div>
@@ -106,6 +107,7 @@ require_once __DIR__ . '/includes/cabecalho.php';
 
   <div class="menu-contexto" id="menu-lista" role="menu" hidden>
     <a href="nova-conversa.php" role="menuitem">Nova conversa</a>
+    <button type="button" role="menuitem" data-lista="usuario">Conversar com um usuário</button>
     <a href="configuracoes.php" role="menuitem">Configurações</a>
     <a href="logout.php" role="menuitem" class="opcao-perigo">Desconectar</a>
   </div>
@@ -131,6 +133,24 @@ require_once __DIR__ . '/includes/cabecalho.php';
         <button type="button" class="btn btn-secundario" id="modal-cancelar">Cancelar</button>
         <button type="button" class="btn btn-perigo" id="modal-confirmar-btn">Apagar</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-usuario" role="dialog" aria-modal="true" aria-labelledby="titulo-usuario" hidden>
+    <div class="modal-conteudo">
+      <h2 class="modal-titulo" id="titulo-usuario">Conversar com um usuário</h2>
+      <p class="modal-texto">Digite o telefone de alguém que tem conta no site.</p>
+      <form id="form-usuario" novalidate>
+        <div class="grupo-campo">
+          <label for="campo-telefone-usuario">Telefone</label>
+          <input type="tel" class="campo" id="campo-telefone-usuario" name="telefone" placeholder="(49) 99999-1111" maxlength="15" autocomplete="off" required>
+          <p class="msg-erro" id="erro-telefone-usuario"></p>
+        </div>
+        <div class="modal-acoes">
+          <button type="button" class="btn btn-secundario" id="usuario-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Conversar</button>
+        </div>
+      </form>
     </div>
   </div>
 

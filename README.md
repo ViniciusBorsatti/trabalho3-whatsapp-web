@@ -25,6 +25,7 @@ https://whatsclone-grupo4.infinityfree.me
 | --- | --- | --- |
 | Painel do administrador (`admin/login.php`) | admin@teste.com | admin123 |
 | Usuário do site (`login.php`) | (49) 99999-0000 | usuario123 |
+| Segundo usuário do site, para testar a conversa entre usuários | (49) 99999-1111 | usuario123 |
 
 ## Como executar (XAMPP)
 
@@ -71,7 +72,8 @@ Para ler o QR com a câmera de um celular de verdade:
 - Painel com CRUD de contatos (criar, listar com busca, editar e excluir) e lista das denúncias
 - Lista pública de contatos com busca e cadastro de novo contato
 - Perfil do contato com favoritar, bloquear e denúncia gravada no banco
-- Conversas carregadas do banco com `fetch` (arquivos da pasta `api/` respondem em JSON)
+- Conversas carregadas do banco com `fetch` (arquivos da pasta `api/` respondem em JSON); cada usuário vê só as próprias conversas
+- Conversa entre usuários do site: pelo ícone de pessoa na lista, digita o telefone de outro usuário cadastrado e as mensagens, fotos e "apagar para todos" chegam para a outra pessoa sem recarregar a página
 - Envio de fotos (JPG, PNG, GIF, WEBP) e PDF de até 5 MB nas conversas; o PHP confere o tipo real do arquivo e salva na pasta `uploads/`
 - Validação no PHP em todos os formulários, mantendo os dados preenchidos quando há erro
 - Tema claro e escuro, layout responsivo
@@ -99,7 +101,7 @@ trabalho3-whatsapp-web/
 │   ├── logout.php
 │   └── painel.php
 ├── api/
-│   ├── conversas.php     Lista, fixa, favorita e marca conversas como lidas
+│   ├── conversas.php     Lista as conversas, inicia conversa com outro usuário, fixa, favorita e marca como lida
 │   ├── mensagens.php     Lista, envia e apaga mensagens
 │   └── qr.php            Gera e consulta o QR code
 ├── includes/

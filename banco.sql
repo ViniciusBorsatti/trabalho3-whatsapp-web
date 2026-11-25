@@ -42,11 +42,13 @@ CREATE TABLE IF NOT EXISTS denuncias (
 
 CREATE TABLE IF NOT EXISTS conversas (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
   contato_id INT NOT NULL,
   nome VARCHAR(100) NOT NULL,
   grupo TINYINT(1) NOT NULL DEFAULT 0,
   fixada TINYINT(1) NOT NULL DEFAULT 0,
   favorita TINYINT(1) NOT NULL DEFAULT 0,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
   FOREIGN KEY (contato_id) REFERENCES contatos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -73,11 +75,36 @@ CREATE TABLE IF NOT EXISTS qr_codes (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS chats (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario1_id INT NOT NULL,
+  usuario2_id INT NOT NULL,
+  criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY par_usuarios (usuario1_id, usuario2_id),
+  FOREIGN KEY (usuario1_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (usuario2_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS mensagens_chat (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  chat_id INT NOT NULL,
+  remetente_id INT NOT NULL,
+  texto TEXT NOT NULL,
+  apagada TINYINT(1) NOT NULL DEFAULT 0,
+  lida TINYINT(1) NOT NULL DEFAULT 0,
+  arquivo VARCHAR(255) NULL,
+  arquivo_tipo ENUM('imagem', 'documento') NULL,
+  enviada_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
+  FOREIGN KEY (remetente_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO admins (nome, email, senha) VALUES
 ('Administrador', 'admin@teste.com', '$2y$10$qEGSW0x1sp0vGqKcnf9J9O57dXvbHV0Om5lbDc/MPl.b91FtN8Ni6');
 
 INSERT INTO usuarios (nome, telefone, email, senha) VALUES
-('Usuário Teste', '(49) 99999-0000', 'usuario@teste.com', '$2y$10$Ybi6q6rSVYa558.IsEraU.t1u8Dy6/ZhzzV3DJHNnOPaxKTWCyAOy');
+('Usuário Teste', '(49) 99999-0000', 'usuario@teste.com', '$2y$10$Ybi6q6rSVYa558.IsEraU.t1u8Dy6/ZhzzV3DJHNnOPaxKTWCyAOy'),
+('Maria Souza', '(49) 99999-1111', 'maria@teste.com', '$2y$10$q42jvdytHNIaaViUvXqOmO8xb5ecBo/HWKH8FBxaxaxizHMH5VOgi');
 
 INSERT INTO contatos (id, nome, recado, telefone, grupo, favorito, bloqueado) VALUES
 (1, 'Trabalho DWI – Grupo 4', 'Grupo da disciplina', '(49) 99999-0001', 1, 1, 0),
@@ -100,19 +127,19 @@ INSERT INTO contatos (id, nome, recado, telefone, grupo, favorito, bloqueado) VA
 (19, 'Tatiane Ribeiro', 'Disponível', '(49) 99999-0019', 0, 0, 0);
 
 
-INSERT INTO conversas (id, contato_id, nome, grupo, fixada, favorita) VALUES
-(1, 1, 'Trabalho DWI – Grupo 4', 1, 1, 1),
-(2, 2, 'Mãe', 0, 1, 1),
-(3, 3, 'Lucas Ferreira', 0, 0, 0),
-(4, 4, 'Ana Beatriz', 0, 0, 1),
-(5, 5, 'Família Silva', 1, 0, 0),
-(6, 6, 'Carlos Mendes', 0, 0, 0),
-(7, 7, 'Juliana Costa', 0, 0, 0),
-(8, 8, 'Futebol de Quinta', 1, 0, 0),
-(9, 9, 'Prof. Ricardo', 0, 0, 0),
-(10, 10, 'Mariana Rocha', 0, 0, 0),
-(11, 11, 'Turma ADS 2026', 1, 0, 0),
-(12, 12, 'Pedro Almeida', 0, 0, 0);
+INSERT INTO conversas (id, usuario_id, contato_id, nome, grupo, fixada, favorita) VALUES
+(1, 1, 1, 'Trabalho DWI – Grupo 4', 1, 1, 1),
+(2, 1, 2, 'Mãe', 0, 1, 1),
+(3, 1, 3, 'Lucas Ferreira', 0, 0, 0),
+(4, 1, 4, 'Ana Beatriz', 0, 0, 1),
+(5, 1, 5, 'Família Silva', 1, 0, 0),
+(6, 1, 6, 'Carlos Mendes', 0, 0, 0),
+(7, 1, 7, 'Juliana Costa', 0, 0, 0),
+(8, 1, 8, 'Futebol de Quinta', 1, 0, 0),
+(9, 1, 9, 'Prof. Ricardo', 0, 0, 0),
+(10, 1, 10, 'Mariana Rocha', 0, 0, 0),
+(11, 1, 11, 'Turma ADS 2026', 1, 0, 0),
+(12, 1, 12, 'Pedro Almeida', 0, 0, 0);
 
 INSERT INTO mensagens (conversa_id, de, texto, enviada_em) VALUES
 (1, 'contato', 'Pessoal, quem vai fazer a tela de login?', '2026-11-14 19:10:00'),
@@ -148,3 +175,10 @@ INSERT INTO mensagens (conversa_id, de, texto, enviada_em) VALUES
 -- Mensagens recebidas que começam como não lidas
 UPDATE mensagens SET lida = 0
 WHERE de = 'contato' AND conversa_id IN (1, 3, 5, 7, 11);
+
+INSERT INTO chats (id, usuario1_id, usuario2_id) VALUES (1, 1, 2);
+
+INSERT INTO mensagens_chat (chat_id, remetente_id, texto, lida, enviada_em) VALUES
+(1, 2, 'Oi! Aqui é a Maria, também tenho conta no clone', 1, '2026-11-24 22:10:00'),
+(1, 1, 'Oi, Maria! Agora dá para conversar entre usuários', 1, '2026-11-24 22:12:00'),
+(1, 2, 'Que legal, chegou na hora!', 0, '2026-11-24 22:13:00');

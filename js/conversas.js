@@ -33,6 +33,13 @@ const painelEmoji = document.getElementById("painel-emoji");
 const btnAnexar = document.getElementById("btn-anexar");
 const campoArquivo = document.getElementById("campo-arquivo");
 const TAMANHO_MAXIMO = 5 * 1024 * 1024;
+const btnConversaUsuario = document.getElementById("btn-conversa-usuario");
+const modalUsuario = document.getElementById("modal-usuario");
+const formUsuario = document.getElementById("form-usuario");
+const campoTelefoneUsuario = document.getElementById("campo-telefone-usuario");
+const erroTelefoneUsuario = document.getElementById("erro-telefone-usuario");
+const usuarioCancelar = document.getElementById("usuario-cancelar");
+const INTERVALO_ATUALIZAR = 3000;
 
 const TEXTO_APAGADA = "Esta mensagem foi apagada";
 
@@ -43,6 +50,8 @@ let filtroAtual = "tudo";
 let alvoMenu = null;
 let idParaApagar = null;
 let timerToast = null;
+let assinaturaLista = "";
+let assinaturaMensagens = "";
 
 async function api(url, dados) {
   const opcoes = dados ? { method: "POST", body: new URLSearchParams(dados) } : {};
@@ -57,15 +66,21 @@ async function api(url, dados) {
   return json;
 }
 
+function lerId(valor) {
+  return /^u\d+$/.test(String(valor)) ? String(valor) : Number(valor);
+}
+
 async function carregarConversas() {
   const json = await api("api/conversas.php");
   conversas = json.conversas;
+  assinaturaLista = JSON.stringify(conversas);
   renderizarLista();
 }
 
 async function carregarMensagens() {
-  const json = await api("api/mensagens.php?conversa=" + idAtual);
+  const json = await api("api/mensagens.php?conversa=" + encodeURIComponent(idAtual));
   mensagensAtuais = json.mensagens;
+  assinaturaMensagens = JSON.stringify(mensagensAtuais);
   renderizarMensagens();
 }
 
@@ -103,6 +118,11 @@ function renderizarLista() {
   });
 
   lista.innerHTML = "";
+
+  if (conversas.length === 0) {
+    lista.appendChild(criar("li", "lista-vazia", "Nenhuma conversa ainda. Toque no ícone de pessoa para falar com outro usuário do site."));
+    return;
+  }
 
   filtradas.forEach(function (c) {
     const ultima = c.ultima;
@@ -195,16 +215,22 @@ async function abrirConversa(id) {
   fotoChat.src = conversa.foto;
   fotoChat.alt = "Foto de " + conversa.nome;
   document.getElementById("chat-avatar").replaceChildren(fotoChat);
-    // aponta o link do cabeçalho para o perfil do contato aberto
-  document.querySelector(".chat-contato").href = "perfil.php?id=" + conversa.contatoId;
-  opcaoDados.href = "perfil.php?id=" + conversa.contatoId;
+  const linkContato = document.querySelector(".chat-contato");
+  if (conversa.usuario) {
+    linkContato.removeAttribute("href");
+    opcaoDados.hidden = true;
+  } else {
+    linkContato.href = "perfil.php?id=" + conversa.contatoId;
+    opcaoDados.href = "perfil.php?id=" + conversa.contatoId;
+    opcaoDados.hidden = false;
+  }
   fecharBuscaMensagens();
   painelEmoji.hidden = true;
 
   if (conversa.bloqueado) {
     chatStatus.textContent = "Você bloqueou este contato";
   } else {
-    chatStatus.textContent = conversa.grupo ? "Grupo" : conversa.telefone;
+    chatStatus.textContent = conversa.grupo ? "Grupo" : conversa.usuario ? conversa.telefone + " · usuário do site" : conversa.telefone;
   }
   campoMensagem.disabled = conversa.bloqueado;
   btnEnviar.disabled = conversa.bloqueado;
@@ -232,6 +258,10 @@ function abrirMenu(evento, alvo) {
 
   if (alvo.tipo === "conversa") {
     const conversa = buscarConversa(alvo.id);
+    if (conversa.usuario) {
+      alvoMenu = null;
+      return;
+    }
     opcaoFixar.textContent = conversa.fixada ? "Desafixar conversa" : "Fixar conversa";
     opcaoFavoritar.textContent = conversa.favorita ? "Desfavoritar" : "Favoritar";
     opcaoFixar.style.display = "";
@@ -275,12 +305,12 @@ function fecharModal() {
 
 lista.addEventListener("click", function (evento) {
   const item = evento.target.closest(".item-conversa");
-  if (item) abrirConversa(Number(item.dataset.id));
+  if (item) abrirConversa(lerId(item.dataset.id));
 });
 
 lista.addEventListener("contextmenu", function (evento) {
   const item = evento.target.closest(".item-conversa");
-  if (item) abrirMenu(evento, { tipo: "conversa", id: Number(item.dataset.id) });
+  if (item) abrirMenu(evento, { tipo: "conversa", id: lerId(item.dataset.id) });
 });
 
 mensagens.addEventListener("contextmenu", function (evento) {
@@ -403,6 +433,8 @@ btnOpcoesChat.addEventListener("click", function (evento) {
   const conversa = buscarConversa(idAtual);
   opcaoChatFixar.textContent = conversa.fixada ? "Desafixar conversa" : "Fixar conversa";
   opcaoChatFavoritar.textContent = conversa.favorita ? "Desfavoritar" : "Favoritar";
+  opcaoChatFixar.hidden = conversa.usuario;
+  opcaoChatFavoritar.hidden = conversa.usuario;
   abrirMenuNoBotao(menuChat, btnOpcoesChat);
 });
 
@@ -495,6 +527,7 @@ document.addEventListener("click", function (evento) {
 document.addEventListener("keydown", function (evento) {
   if (evento.key === "Escape") {
     fecharMenus();
+    fecharModalUsuario();
     painelEmoji.hidden = true;
   }
 });
@@ -505,7 +538,7 @@ modalConfirmar.addEventListener("click", async function () {
   const id = idParaApagar;
   fecharModal();
   try {
-    await api("api/mensagens.php", { acao: "apagar", id: id });
+    await api("api/mensagens.php", { acao: "apagar", id: id, conversa: idAtual });
     await carregarMensagens();
     await carregarConversas();
   } catch (erro) {
@@ -513,9 +546,89 @@ modalConfirmar.addEventListener("click", async function () {
   }
 });
 
+function formatarTelefone(valor) {
+  const d = valor.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d.length ? "(" + d : "";
+  if (d.length <= 7) return "(" + d.slice(0, 2) + ") " + d.slice(2);
+  return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+}
+
+function abrirModalUsuario() {
+  fecharMenus();
+  campoTelefoneUsuario.value = "";
+  campoTelefoneUsuario.classList.remove("invalido");
+  erroTelefoneUsuario.textContent = "";
+  modalUsuario.hidden = false;
+  campoTelefoneUsuario.focus();
+}
+
+function fecharModalUsuario() {
+  modalUsuario.hidden = true;
+}
+
+btnConversaUsuario.addEventListener("click", abrirModalUsuario);
+
+menuLista.addEventListener("click", function (evento) {
+  if (evento.target.closest('[data-lista="usuario"]')) abrirModalUsuario();
+});
+
+usuarioCancelar.addEventListener("click", fecharModalUsuario);
+
+campoTelefoneUsuario.addEventListener("input", function () {
+  campoTelefoneUsuario.value = formatarTelefone(campoTelefoneUsuario.value);
+});
+
+formUsuario.addEventListener("submit", async function (evento) {
+  evento.preventDefault();
+  const telefone = campoTelefoneUsuario.value.trim();
+  if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(telefone)) {
+    campoTelefoneUsuario.classList.add("invalido");
+    erroTelefoneUsuario.textContent = "Use o formato (49) 99999-0001.";
+    return;
+  }
+  try {
+    const json = await api("api/conversas.php", { acao: "iniciar", telefone: telefone });
+    fecharModalUsuario();
+    await carregarConversas();
+    abrirConversa(json.id);
+  } catch (erro) {
+    campoTelefoneUsuario.classList.add("invalido");
+    erroTelefoneUsuario.textContent = erro.message;
+  }
+});
+
+async function atualizar() {
+  if (document.hidden) return;
+  try {
+    const json = await api("api/conversas.php");
+    if (JSON.stringify(json.conversas) !== assinaturaLista) {
+      conversas = json.conversas;
+      assinaturaLista = JSON.stringify(conversas);
+      if (menu.hidden) renderizarLista();
+    }
+    if (idAtual === null) return;
+    const atual = buscarConversa(idAtual);
+    const resposta = await api("api/mensagens.php?conversa=" + encodeURIComponent(idAtual));
+    if (JSON.stringify(resposta.mensagens) !== assinaturaMensagens) {
+      mensagensAtuais = resposta.mensagens;
+      assinaturaMensagens = JSON.stringify(mensagensAtuais);
+      renderizarMensagens();
+    }
+    if (atual && atual.naoLidas > 0) {
+      await api("api/conversas.php", { acao: "ler", id: idAtual });
+      atual.naoLidas = 0;
+      renderizarLista();
+    }
+  } catch (erro) {
+    return;
+  }
+}
+
+setInterval(atualizar, INTERVALO_ATUALIZAR);
+
 carregarConversas()
   .then(function () {
-    const abrir = Number(app.dataset.abrir);
+    const abrir = lerId(app.dataset.abrir);
     if (abrir && buscarConversa(abrir)) abrirConversa(abrir);
   })
   .catch(function (erro) {

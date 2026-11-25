@@ -251,9 +251,9 @@ function exigirUsuarioApi(): void
     }
 }
 
-function listarConversas(PDO $pdo): array
+function listarConversas(PDO $pdo, int $meuId): array
 {
-    return $pdo->query(
+    $stmt = $pdo->prepare(
         'SELECT cv.id, cv.contato_id, cv.nome, cv.grupo, cv.fixada, c.favorito AS favorita,
                 (SELECT COUNT(*) FROM mensagens n
                  WHERE n.conversa_id = cv.id AND n.de <> \'eu\' AND n.lida = 0) AS nao_lidas,
@@ -262,25 +262,30 @@ function listarConversas(PDO $pdo): array
          FROM conversas cv
          JOIN contatos c ON c.id = cv.contato_id
          LEFT JOIN mensagens m ON m.id = (SELECT MAX(id) FROM mensagens WHERE conversa_id = cv.id)
+         WHERE cv.usuario_id = ?
          ORDER BY cv.fixada DESC, m.enviada_em DESC'
-    )->fetchAll();
+    );
+    $stmt->execute([$meuId]);
+    return $stmt->fetchAll();
 }
 
-function buscarConversaPorId(PDO $pdo, int $id): ?array
+function buscarConversaPorId(PDO $pdo, int $id, int $meuId): ?array
 {
     $stmt = $pdo->prepare(
-        'SELECT cv.id, cv.contato_id, cv.fixada, c.favorito AS favorita, c.bloqueado
+        'SELECT cv.id, cv.usuario_id, cv.contato_id, cv.fixada, c.favorito AS favorita, c.bloqueado
          FROM conversas cv JOIN contatos c ON c.id = cv.contato_id
-         WHERE cv.id = ?'
+         WHERE cv.id = ? AND cv.usuario_id = ?'
     );
-    $stmt->execute([$id]);
+    $stmt->execute([$id, $meuId]);
     return $stmt->fetch() ?: null;
 }
 
 function alternarFixada(PDO $pdo, array $conversa): void
 {
     if (!$conversa['fixada']) {
-        $fixadas = (int)$pdo->query('SELECT COUNT(*) FROM conversas WHERE fixada = 1')->fetchColumn();
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM conversas WHERE fixada = 1 AND usuario_id = ?');
+        $stmt->execute([$conversa['usuario_id']]);
+        $fixadas = (int)$stmt->fetchColumn();
         if ($fixadas >= LIMITE_FIXADAS) {
             throw new DomainException('Você só pode fixar até 3 conversas.');
         }
@@ -318,13 +323,9 @@ function enviarMensagem(PDO $pdo, array $conversa, string $texto): int
     return (int)$pdo->lastInsertId();
 }
 
-function apagarParaTodos(PDO $pdo, int $mensagemId): void
+function conferirPodeApagar($mensagem, bool $minha): void
 {
-    $stmt = $pdo->prepare('SELECT de, apagada, arquivo, TIMESTAMPDIFF(SECOND, enviada_em, NOW()) AS segundos FROM mensagens WHERE id = ?');
-    $stmt->execute([$mensagemId]);
-    $mensagem = $stmt->fetch();
-
-    if (!$mensagem || $mensagem['de'] !== 'eu') {
+    if (!$mensagem || !$minha) {
         throw new DomainException('Só é possível apagar mensagens enviadas por você.');
     }
     if ($mensagem['apagada']) {
@@ -333,13 +334,29 @@ function apagarParaTodos(PDO $pdo, int $mensagemId): void
     if ((int)$mensagem['segundos'] > LIMITE_APAGAR_SEGUNDOS) {
         throw new DomainException('Só é possível apagar para todos mensagens com até 15 minutos.');
     }
+}
+
+function removerArquivo(?string $caminho): void
+{
+    if ($caminho && is_file(__DIR__ . '/../' . $caminho)) {
+        unlink(__DIR__ . '/../' . $caminho);
+    }
+}
+
+function apagarParaTodos(PDO $pdo, int $mensagemId, int $meuId): void
+{
+    $stmt = $pdo->prepare(
+        'SELECT m.de, m.apagada, m.arquivo, TIMESTAMPDIFF(SECOND, m.enviada_em, NOW()) AS segundos
+         FROM mensagens m JOIN conversas cv ON cv.id = m.conversa_id
+         WHERE m.id = ? AND cv.usuario_id = ?'
+    );
+    $stmt->execute([$mensagemId, $meuId]);
+    $mensagem = $stmt->fetch();
+    conferirPodeApagar($mensagem, $mensagem && $mensagem['de'] === 'eu');
 
     $stmt = $pdo->prepare('UPDATE mensagens SET apagada = 1, arquivo = NULL WHERE id = ?');
     $stmt->execute([$mensagemId]);
-
-    if ($mensagem['arquivo'] && is_file(__DIR__ . '/../' . $mensagem['arquivo'])) {
-        unlink(__DIR__ . '/../' . $mensagem['arquivo']);
-    }
+    removerArquivo($mensagem['arquivo']);
 }
 
 function formatarMensagem(array $m): array
@@ -379,11 +396,8 @@ function tipoDoArquivo(string $caminho): string
     return file_get_contents($caminho, false, null, 0, 5) === '%PDF-' ? 'application/pdf' : '';
 }
 
-function enviarArquivo(PDO $pdo, array $conversa, array $arquivo): int
+function salvarArquivoEnviado(array $arquivo): array
 {
-    if ($conversa['bloqueado']) {
-        throw new DomainException('Você bloqueou este contato. Desbloqueie para enviar mensagens.');
-    }
     if (($arquivo['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file($arquivo['tmp_name'])) {
         throw new DomainException('Não foi possível receber o arquivo. Tente de novo.');
     }
@@ -408,8 +422,17 @@ function enviarArquivo(PDO $pdo, array $conversa, array $arquivo): int
 
     $nomeOriginal = basename((string)$arquivo['name']);
     $nomeOriginal = function_exists('mb_substr') ? mb_substr($nomeOriginal, 0, 150) : substr($nomeOriginal, 0, 150);
+    return ['uploads/' . $nomeSalvo, $categoria, $nomeOriginal];
+}
+
+function enviarArquivo(PDO $pdo, array $conversa, array $arquivo): int
+{
+    if ($conversa['bloqueado']) {
+        throw new DomainException('Você bloqueou este contato. Desbloqueie para enviar mensagens.');
+    }
+    [$caminho, $categoria, $nomeOriginal] = salvarArquivoEnviado($arquivo);
     $stmt = $pdo->prepare("INSERT INTO mensagens (conversa_id, de, texto, arquivo, arquivo_tipo) VALUES (?, 'eu', ?, ?, ?)");
-    $stmt->execute([$conversa['id'], $nomeOriginal, 'uploads/' . $nomeSalvo, $categoria]);
+    $stmt->execute([$conversa['id'], $nomeOriginal, $caminho, $categoria]);
     return (int)$pdo->lastInsertId();
 }
 
@@ -522,10 +545,10 @@ function entrarPeloQr(PDO $pdo, array $qr): bool
     return true;
 }
 
-function abrirConversaComContato(PDO $pdo, int $contatoId): ?int
+function abrirConversaComContato(PDO $pdo, int $contatoId, int $meuId): ?int
 {
-    $stmt = $pdo->prepare('SELECT id FROM conversas WHERE contato_id = ? LIMIT 1');
-    $stmt->execute([$contatoId]);
+    $stmt = $pdo->prepare('SELECT id FROM conversas WHERE contato_id = ? AND usuario_id = ? LIMIT 1');
+    $stmt->execute([$contatoId, $meuId]);
     $id = $stmt->fetchColumn();
     if ($id) {
         return (int)$id;
@@ -536,12 +559,110 @@ function abrirConversaComContato(PDO $pdo, int $contatoId): ?int
         return null;
     }
 
-    $stmt = $pdo->prepare('INSERT INTO conversas (contato_id, nome, grupo) VALUES (?, ?, ?)');
-    $stmt->execute([$contatoId, $contato['nome'], (int)$contato['grupo']]);
+    $stmt = $pdo->prepare('INSERT INTO conversas (usuario_id, contato_id, nome, grupo) VALUES (?, ?, ?, ?)');
+    $stmt->execute([$meuId, $contatoId, $contato['nome'], (int)$contato['grupo']]);
     return (int)$pdo->lastInsertId();
 }
 
 function fotoContato(int $id): string
 {
     return is_file(__DIR__ . '/../img/avatares/' . $id . '.svg') ? 'img/avatares/' . $id . '.svg' : 'img/avatar-padrao.svg';
+}
+
+function idDaConversa(string $valor): array
+{
+    if (preg_match('/^u(\d+)$/', $valor, $partes)) {
+        return ['usuario', (int)$partes[1]];
+    }
+    return ['contato', (int)$valor];
+}
+
+function abrirChatPorTelefone(PDO $pdo, int $meuId, string $telefone): int
+{
+    if (!telefoneValido($telefone)) {
+        throw new DomainException('Use o formato (49) 99999-0001.');
+    }
+    $outro = buscarUsuarioPorTelefone($pdo, $telefone);
+    if (!$outro) {
+        throw new DomainException('Nenhum usuário do site tem esse telefone.');
+    }
+    if ((int)$outro['id'] === $meuId) {
+        throw new DomainException('Esse é o seu próprio número.');
+    }
+
+    $par = [min($meuId, (int)$outro['id']), max($meuId, (int)$outro['id'])];
+    $stmt = $pdo->prepare('SELECT id FROM chats WHERE usuario1_id = ? AND usuario2_id = ?');
+    $stmt->execute($par);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        return (int)$id;
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO chats (usuario1_id, usuario2_id) VALUES (?, ?)');
+    $stmt->execute($par);
+    return (int)$pdo->lastInsertId();
+}
+
+function listarChats(PDO $pdo, int $meuId): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT ch.id, u.nome, u.telefone, u.recado,
+                (SELECT COUNT(*) FROM mensagens_chat n
+                 WHERE n.chat_id = ch.id AND n.remetente_id <> ? AND n.lida = 0) AS nao_lidas,
+                m.texto AS ultima_texto, m.apagada AS ultima_apagada, m.arquivo_tipo AS ultima_tipo, m.enviada_em AS ultima_em
+         FROM chats ch
+         JOIN usuarios u ON u.id = IF(ch.usuario1_id = ?, ch.usuario2_id, ch.usuario1_id)
+         LEFT JOIN mensagens_chat m ON m.id = (SELECT MAX(id) FROM mensagens_chat WHERE chat_id = ch.id)
+         WHERE ch.usuario1_id = ? OR ch.usuario2_id = ?'
+    );
+    $stmt->execute([$meuId, $meuId, $meuId, $meuId]);
+    return $stmt->fetchAll();
+}
+
+function buscarChat(PDO $pdo, int $chatId, int $meuId): ?array
+{
+    $stmt = $pdo->prepare('SELECT id FROM chats WHERE id = ? AND (usuario1_id = ? OR usuario2_id = ?)');
+    $stmt->execute([$chatId, $meuId, $meuId]);
+    return $stmt->fetch() ?: null;
+}
+
+function listarMensagensChat(PDO $pdo, int $chatId, int $meuId): array
+{
+    $stmt = $pdo->prepare(
+        "SELECT id, IF(remetente_id = ?, 'eu', 'contato') AS de, texto, apagada, arquivo, arquivo_tipo, enviada_em
+         FROM mensagens_chat WHERE chat_id = ? ORDER BY enviada_em, id"
+    );
+    $stmt->execute([$meuId, $chatId]);
+    return $stmt->fetchAll();
+}
+
+function enviarMensagemChat(PDO $pdo, int $chatId, int $meuId, string $texto, ?string $arquivo = null, ?string $tipo = null): int
+{
+    $stmt = $pdo->prepare('INSERT INTO mensagens_chat (chat_id, remetente_id, texto, arquivo, arquivo_tipo) VALUES (?, ?, ?, ?, ?)');
+    $stmt->execute([$chatId, $meuId, $texto, $arquivo, $tipo]);
+    return (int)$pdo->lastInsertId();
+}
+
+function enviarArquivoChat(PDO $pdo, int $chatId, int $meuId, array $arquivo): int
+{
+    [$caminho, $categoria, $nomeOriginal] = salvarArquivoEnviado($arquivo);
+    return enviarMensagemChat($pdo, $chatId, $meuId, $nomeOriginal, $caminho, $categoria);
+}
+
+function apagarMensagemChat(PDO $pdo, int $mensagemId, int $meuId): void
+{
+    $stmt = $pdo->prepare('SELECT remetente_id, apagada, arquivo, TIMESTAMPDIFF(SECOND, enviada_em, NOW()) AS segundos FROM mensagens_chat WHERE id = ?');
+    $stmt->execute([$mensagemId]);
+    $mensagem = $stmt->fetch();
+    conferirPodeApagar($mensagem, $mensagem && (int)$mensagem['remetente_id'] === $meuId);
+
+    $stmt = $pdo->prepare('UPDATE mensagens_chat SET apagada = 1, arquivo = NULL WHERE id = ?');
+    $stmt->execute([$mensagemId]);
+    removerArquivo($mensagem['arquivo']);
+}
+
+function marcarChatComoLido(PDO $pdo, int $chatId, int $meuId): void
+{
+    $stmt = $pdo->prepare('UPDATE mensagens_chat SET lida = 1 WHERE chat_id = ? AND remetente_id <> ?');
+    $stmt->execute([$chatId, $meuId]);
 }

@@ -84,8 +84,12 @@ RN01, RN02 e RN03 validadas no PHP.
 **Pedido 20** – Fazer o QR code real (RN04): token gerado no PHP, validade de 60 segundos, uso único e
 confirmação pelo celular.
 
+**Pedido 21** – Fazer a conversa entre usuários cadastrados: iniciar pelo telefone de outro usuário, mensagens,
+fotos e "apagar para todos" chegando para a outra pessoa sem recarregar, e cada usuário vendo só as
+próprias conversas.
+
 ---
 
 ## Parte 4 – Vídeo
 
-**Pedido 21** – Montar o roteiro do vídeo dividindo as partes entre os integrantes.
+**Pedido 22** – Montar o roteiro do vídeo dividindo as partes entre os integrantes.

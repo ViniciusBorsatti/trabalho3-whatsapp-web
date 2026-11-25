@@ -399,6 +399,10 @@ body > .rodape-aviso {
   text-decoration: none;
 }
 
+.menu-contexto [hidden] {
+  display: none;
+}
+
 .menu-contexto button:hover,
 .menu-contexto a:hover {
   background: var(--painel);
@@ -614,4 +618,12 @@ body > .rodape-aviso {
   .mensagem-foto img {
     max-width: 200px;
   }
+}
+
+.lista-vazia {
+  padding: 24px 20px;
+  color: var(--texto-sec);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
 }
